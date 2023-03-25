@@ -13,11 +13,12 @@
 class S21Matrix {
  private:
   int rows_, cols_;
-  double *p_;
+  double** p_;
 
  public:
   S21Matrix();
   S21Matrix(int rows, int cols);
+  S21Matrix(const S21Matrix& m);
   ~S21Matrix();
 
   void fill_by_order();
