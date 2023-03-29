@@ -2,7 +2,7 @@
  * Copyright 2023 Gleb Tolstenev
  * yonnarge@student.21-school.ru
  *
- * s21_matrix_oop.cpp is the source code file for s21_matrix_oop library
+ * s21_matrix_oop.cc is the source code file for s21_matrix_oop library
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

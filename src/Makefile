@@ -30,7 +30,7 @@ HEADER	:= s21_matrix_oop.h
 
 CC		:= gcc
 CFLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
-SRCS	:= s21_matrix_oop.cpp
+SRCS	:= s21_matrix_oop.cc
 OBJS	:= $(SRCS:.cpp=.o)
 TEST	:= test
 
