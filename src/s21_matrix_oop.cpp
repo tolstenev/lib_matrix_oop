@@ -22,7 +22,7 @@
 /**
  * @brief Default constructor
  */
-S21Matrix::S21Matrix() { S21Matrix(3, 3); }
+S21Matrix::S21Matrix() : rows_(3), cols_(3), elements_(NewArrayOfElements()) {}
 
 /**
  * @brief Parameterized constructor
@@ -30,90 +30,120 @@ S21Matrix::S21Matrix() { S21Matrix(3, 3); }
  * @param cols - number of colomns
  */
 S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
-	elements_ = new double *[rows_]();
-	for (int i = 0; i < rows_; ++i)
-		elements_[i] = new double[cols_]();
+  elements_ = NewArrayOfElements();
 }
 
 /**
  * @brief Copy constructor
  * @param other - the matrix to be copied
  */
-S21Matrix::S21Matrix(const S21Matrix &other) {
-	rows_ = other.rows_;
-	cols_ = other.cols_;
-	elements_ = new double *[rows_]();
+S21Matrix::S21Matrix(const S21Matrix &other) : rows_(other.rows_), cols_(other.cols_) {
+  elements_ = NewArrayOfElements();
+  CopyArrayOfElements(other);
+}
 
-	for (int i = 0; i < rows_; ++i)
-		elements_[i] = new double[cols_]();
-
-	for (int i = 0; i < rows_; ++i)
-		for (int j = 0; j < cols_; ++j)
-	    elements_[i][j] = other.elements_[i][j];
+void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      elements_[i][j] = other.elements_[i][j];
+    }
+  }
 }
 
 /**
  * @brief Destructor
  */
-S21Matrix::~S21Matrix() {
-  if (elements_) {
-		for (int i = 0; i < rows_; ++i)
-			delete [] elements_[i];
-    delete elements_;
-  }
-}
+S21Matrix::~S21Matrix() { DeleteArrayOfElements(); }
 
 /**
  * @brief Fills the matrix with numbers in order from 1 to rows * cols)
  */
 void S21Matrix::FillByOrder() {
   int k = 0;
-	for (int i = 0; i < rows_; ++i)
-		for (int j = 0; j < cols_; ++j)
-			elements_[i][j] = ++k;
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      elements_[i][j] = ++k;
+    }
+  }
 }
 
 /**
  * @brief Fills the matrix with numbers by 1
  */
 void S21Matrix::FillWithOne() {
-	for (int i = 0; i < rows_; ++i)
-		for (int j = 0; j < cols_; ++j)
-			elements_[i][j] = 1;
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      elements_[i][j] = 1;
+    }
+  }
 }
 
 /**
  * @brief Print matrix
  */
 void S21Matrix::Print() {
-	for (int i = 0; i < rows_; ++i) {
-		for (int j = 0; j < cols_; ++j)
-			std::cout << elements_[i][j] << '\t';
-		std::cout << std::endl;
-	}
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      std::cout << elements_[i][j] << '\t';
+    }
+    std::cout << std::endl;
+  }
+}
+
+/**
+ * @brief Allocate memory for matrix elements
+ */
+double **S21Matrix::NewArrayOfElements() const {
+  auto elements = new double *[rows_]();
+  for (int i = 0; i < rows_; ++i) {
+    elements[i] = new double[cols_]();
+  }
+  return elements;
+}
+
+/**
+ * @brief Allocate memory for matrix elements
+ */
+void S21Matrix::DeleteArrayOfElements() {
+  if (elements_) {
+    for (int i = 0; i < rows_; ++i) {
+      delete[] elements_[i];
+    }
+    delete elements_;
+  }
+}
+
+S21Matrix &S21Matrix::operator=(const S21Matrix &other) {  // TODO: Add self-assignment properly
+  DeleteArrayOfElements();
+  NewArrayOfElements();
+  CopyArrayOfElements(other);
+  return *this;
 }
 
 /**
  * @brief Check the current work
  */
 int main() {
+  S21Matrix m1(3, 3);
+  m1.FillByOrder();
+  std::cout << "m1" << std::endl;
+  m1.Print();
+  std::cout << std::endl;
 
-	S21Matrix m1(3, 3);
-	m1.FillByOrder();
+  S21Matrix m2(m1);
+  std::cout << "m2" << std::endl;
+  m2.Print();
+  std::cout << std::endl;
+
+	m2.FillWithOne();
+	std::cout << "m2" << std::endl;
+	m2.Print();
+	std::cout << std::endl;
+
+	m1 = m2;
 	std::cout << "m1" << std::endl;
 	m1.Print();
 	std::cout << std::endl;
 
-	S21Matrix m2(m1);
-	std::cout << "m2" << std::endl;
-
-	m2.Print();
-	std::cout << std::endl;
-
-	std::cout << "m2 after change" << std::endl;
-	m2.FillWithOne();
-	m2.Print();
-	std::cout << std::endl;
-
-	return 0;
+  return 0;
 }

@@ -31,7 +31,14 @@ class S21Matrix {
   S21Matrix();
   S21Matrix(int rows, int cols);
   S21Matrix(const S21Matrix& m);
+	S21Matrix(S21Matrix&& other);
   ~S21Matrix();
+
+  S21Matrix& operator=(const S21Matrix& other);
+
+  double** NewArrayOfElements() const;
+  void DeleteArrayOfElements();
+  void CopyArrayOfElements(const S21Matrix& other);
 
   void FillByOrder();
   void FillWithOne();
