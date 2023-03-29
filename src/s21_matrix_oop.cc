@@ -35,13 +35,17 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
 
 /**
  * @brief Copy constructor
- * @param other - the matrix to be copied
+ * @param other - reference to the matrix that will be copied
  */
 S21Matrix::S21Matrix(const S21Matrix &other) : rows_(other.rows_), cols_(other.cols_) {
   elements_ = NewArrayOfElements();
   CopyArrayOfElements(other);
 }
 
+/**
+ * @brief Copy elements of matrix other
+ * @param other - reference to the matrix whose elements will be copied
+ */
 void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
@@ -49,6 +53,17 @@ void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
     }
   }
 }
+
+/**
+ * @brief Move constructor
+ * @param other
+ */
+S21Matrix::S21Matrix(S21Matrix&& other) : rows_(other.rows_), cols_(other.cols_), elements_(other.elements_) {
+	other.rows_ = 0;
+	other.cols_ = 0;
+	other.elements_ = nullptr;
+}
+
 
 /**
  * @brief Destructor
@@ -92,6 +107,7 @@ void S21Matrix::Print() {
 
 /**
  * @brief Allocate memory for matrix elements
+ * @return Pointer to the allocated memory
  */
 double **S21Matrix::NewArrayOfElements() const {
   auto elements = new double *[rows_]();
@@ -113,6 +129,11 @@ void S21Matrix::DeleteArrayOfElements() {
   }
 }
 
+/**
+ * @brief Overload of '=' for matrices
+ * @param other - the matrix that will be assigned
+ * @return reference to the new matrix
+ */
 S21Matrix &S21Matrix::operator=(const S21Matrix &other) {  // TODO: Add self-assignment properly
   DeleteArrayOfElements();
   NewArrayOfElements();
@@ -124,25 +145,15 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {  // TODO: Add self-ass
  * @brief Check the current work
  */
 int main() {
-  S21Matrix m1(3, 3);
+  S21Matrix m1(5,5);
   m1.FillByOrder();
   std::cout << "m1" << std::endl;
   m1.Print();
   std::cout << std::endl;
 
-  S21Matrix m2(m1);
-  std::cout << "m2" << std::endl;
-  m2.Print();
-  std::cout << std::endl;
-
-	m2.FillWithOne();
-	std::cout << "m2" << std::endl;
-	m2.Print();
-	std::cout << std::endl;
-
-	m1 = m2;
-	std::cout << "m1" << std::endl;
-	m1.Print();
+	S21Matrix m3 = std::move(m1);
+	std::cout << "m3" << std::endl;
+	m3.Print();
 	std::cout << std::endl;
 
   return 0;

@@ -31,7 +31,7 @@ HEADER	:= s21_matrix_oop.h
 CC		:= gcc
 CFLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
 SRCS	:= s21_matrix_oop.cc
-OBJS	:= $(SRCS:.cpp=.o)
+OBJS	:= $(SRCS:.cc=.o)
 TEST	:= test
 
 .PHONY: all test check check_valgrind clean fclean re
@@ -51,7 +51,7 @@ s21_matrix_oop.a: $(OBJS)
 		@clear
 		ar rcs $(NAME) $(OBJS)
 
-%.o: %.cpp $(HEADER)
+%.o: %.cc $(HEADER)
 		$(CC) $(CFLAGS) -c $< -o $@
 
 test: $(NAME)
