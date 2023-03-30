@@ -20,25 +20,51 @@
 #include "s21_matrix_oop.h"
 
 /**
+ * @brief Constructor for exception
+ * @param error_code - the numeric code of error
+ */
+S21MatrixException::S21MatrixException(int error_code) {
+  error_code_ = error_code;
+}
+
+/**
+ * @brief Copy constructor for exception
+ * @param other
+ */
+S21MatrixException::S21MatrixException(
+    const S21MatrixException &other) noexcept {
+  error_code_ = other.error_code_;
+}
+
+/**
  * @brief Default constructor
  */
-S21Matrix::S21Matrix() : rows_(3), cols_(3), elements_(NewArrayOfElements()) {}
+S21Matrix::S21Matrix() : rows_(3), cols_(3), matrix_(NewArrayOfElements()) {}
 
 /**
  * @brief Parameterized constructor
  * @param rows - number of rows
  * @param cols - number of colomns
  */
-S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
-  elements_ = NewArrayOfElements();
+S21Matrix::S21Matrix(int rows, int cols) {
+  if (rows < 1) {
+    throw S21MatrixException(INCORRECT_ROWS);
+  } else if (cols < 1) {
+    throw S21MatrixException(INCORRECT_COLS);
+  } else {
+    rows_ = rows;
+    cols_ = cols;
+    matrix_ = NewArrayOfElements();
+  }
 }
 
 /**
  * @brief Copy constructor
  * @param other - reference to the matrix that will be copied
  */
-S21Matrix::S21Matrix(const S21Matrix &other) : rows_(other.rows_), cols_(other.cols_) {
-  elements_ = NewArrayOfElements();
+S21Matrix::S21Matrix(const S21Matrix &other)
+    : rows_(other.rows_), cols_(other.cols_) {
+  matrix_ = NewArrayOfElements();
   CopyArrayOfElements(other);
 }
 
@@ -49,7 +75,7 @@ S21Matrix::S21Matrix(const S21Matrix &other) : rows_(other.rows_), cols_(other.c
 void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      elements_[i][j] = other.elements_[i][j];
+      matrix_[i][j] = other.matrix_[i][j];
     }
   }
 }
@@ -58,12 +84,12 @@ void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
  * @brief Move constructor
  * @param other
  */
-S21Matrix::S21Matrix(S21Matrix&& other) : rows_(other.rows_), cols_(other.cols_), elements_(other.elements_) {
-	other.rows_ = 0;
-	other.cols_ = 0;
-	other.elements_ = nullptr;
+S21Matrix::S21Matrix(S21Matrix &&other) noexcept
+    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
+  other.rows_ = 0;
+  other.cols_ = 0;
+  other.matrix_ = nullptr;
 }
-
 
 /**
  * @brief Destructor
@@ -77,7 +103,7 @@ void S21Matrix::FillByOrder() {
   int k = 0;
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      elements_[i][j] = ++k;
+      matrix_[i][j] = ++k;
     }
   }
 }
@@ -88,7 +114,7 @@ void S21Matrix::FillByOrder() {
 void S21Matrix::FillWithOne() {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      elements_[i][j] = 1;
+      matrix_[i][j] = 1;
     }
   }
 }
@@ -99,7 +125,7 @@ void S21Matrix::FillWithOne() {
 void S21Matrix::Print() {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      std::cout << elements_[i][j] << '\t';
+      std::cout << matrix_[i][j] << '\t';
     }
     std::cout << std::endl;
   }
@@ -121,11 +147,11 @@ double **S21Matrix::NewArrayOfElements() const {
  * @brief Allocate memory for matrix elements
  */
 void S21Matrix::DeleteArrayOfElements() {
-  if (elements_) {
+  if (matrix_) {
     for (int i = 0; i < rows_; ++i) {
-      delete[] elements_[i];
+      delete[] matrix_[i];
     }
-    delete elements_;
+    delete matrix_;
   }
 }
 
@@ -134,7 +160,8 @@ void S21Matrix::DeleteArrayOfElements() {
  * @param other - the matrix that will be assigned
  * @return reference to the new matrix
  */
-S21Matrix &S21Matrix::operator=(const S21Matrix &other) {  // TODO: Add self-assignment properly
+S21Matrix &S21Matrix::operator=(
+    const S21Matrix &other) {  // TODO: Add self-assignment properly
   DeleteArrayOfElements();
   NewArrayOfElements();
   CopyArrayOfElements(other);
@@ -142,19 +169,39 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {  // TODO: Add self-ass
 }
 
 /**
+ * @brief Get the string to identifying exception
+ */
+const char *S21MatrixException::what() const noexcept {
+  const char *comment;
+  if (error_code_ == INCORRECT_ROWS)
+    comment = comment_low_rows_;
+  else if (error_code_ == INCORRECT_COLS)
+    comment = comment_low_cols_;
+  else
+    comment = "Undefiend errof";
+  return comment;
+}
+
+/**
  * @brief Check the current work
  */
 int main() {
-  S21Matrix m1(5,5);
-  m1.FillByOrder();
-  std::cout << "m1" << std::endl;
-  m1.Print();
-  std::cout << std::endl;
+  try {
+    S21Matrix m1(5, 5);
+    m1.FillByOrder();
+    std::cout << "m1" << std::endl;
+    m1.Print();
+    std::cout << std::endl;
 
-	S21Matrix m3 = std::move(m1);
-	std::cout << "m3" << std::endl;
-	m3.Print();
-	std::cout << std::endl;
+    S21Matrix m3 = std::move(m1);
+    std::cout << "m3" << std::endl;
+    m3.Print();
+    std::cout << std::endl;
+  }
+
+  catch (std::exception &ex) {
+    std::cout << "Exception Caught: " << ex.what() << std::endl;
+  }
 
   return 0;
 }

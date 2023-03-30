@@ -20,18 +20,33 @@
 #ifndef __S21MATRIX_H__
 #define __S21MATRIX_H__
 
+#include <cstring>
+#include <exception>
 #include <iostream>
 
+/**
+ * @brief Numeric error codes for exceptions
+ */
+enum error_codes {
+  OK = 0,
+  INCORRECT_ROWS = 1,
+  INCORRECT_COLS = 2,
+  CALC_ERROR = 3,
+};
+
+/**
+ * @brief Implementation of the matrix
+ */
 class S21Matrix {
  private:
   int rows_, cols_;
-  double** elements_;
+  double** matrix_;
 
  public:
   S21Matrix();
   S21Matrix(int rows, int cols);
-  S21Matrix(const S21Matrix& m);
-	S21Matrix(S21Matrix&& other);
+  S21Matrix(const S21Matrix& other);
+  S21Matrix(S21Matrix&& other) noexcept;
   ~S21Matrix();
 
   S21Matrix& operator=(const S21Matrix& other);
@@ -43,6 +58,22 @@ class S21Matrix {
   void FillByOrder();
   void FillWithOne();
   void Print();
+};
+
+/**
+ * @brief Handling exception
+ */
+class S21MatrixException : public std::exception {
+ private:
+  int error_code_;
+  const char* comment_low_rows_ = "The number of rows is lower than 1";
+  const char* comment_low_cols_ = "The number of columns is lower than 1";
+
+ public:
+  explicit S21MatrixException(int error_code);
+  S21MatrixException(const S21MatrixException& other) noexcept;
+
+  const char* what() const noexcept override;
 };
 
 #endif
