@@ -31,7 +31,7 @@ enum error_codes {
   OK = 0,
   INCORRECT_ROWS = 1,
   INCORRECT_COLS = 2,
-  CALC_ERROR = 3,
+  DIFF_SIZE = 3,
 };
 
 /**
@@ -49,11 +49,19 @@ class S21Matrix {
   S21Matrix(S21Matrix&& other) noexcept;
   ~S21Matrix();
 
-  S21Matrix& operator=(const S21Matrix& other);
+	S21Matrix& operator=(const S21Matrix& other);
+	S21Matrix operator+(const S21Matrix& other) const;
+
+	void SumMatrix(const S21Matrix& other);
 
   double** NewArrayOfElements() const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
+
+	void HaveSameSize(const S21Matrix &other);
+
+  int GetRows() const { return rows_; }
+  int GetCols() const { return cols_; }
 
   void FillByOrder();
   void FillWithOne();
@@ -61,13 +69,15 @@ class S21Matrix {
 };
 
 /**
- * @brief Handling exception
+ * @brief Handling exception class
  */
 class S21MatrixException : public std::exception {
  private:
   int error_code_;
   const char* comment_low_rows_ = "The number of rows is lower than 1";
   const char* comment_low_cols_ = "The number of columns is lower than 1";
+  const char* comment_diff_size_ =
+      "The operation cannot be called for matrices of different sizes";
 
  public:
   explicit S21MatrixException(int error_code);

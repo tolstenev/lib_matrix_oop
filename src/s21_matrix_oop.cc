@@ -177,9 +177,45 @@ const char *S21MatrixException::what() const noexcept {
     comment = comment_low_rows_;
   else if (error_code_ == INCORRECT_COLS)
     comment = comment_low_cols_;
+  else if (error_code_ == DIFF_SIZE)
+    comment = comment_diff_size_;
   else
-    comment = "Undefiend errof";
+    comment = "Undefiend error";
   return comment;
+}
+
+/**
+ * @brief Compare the current matrix size with other
+ * @param other - the matrix to be compared with
+ */
+void S21Matrix::HaveSameSize(const S21Matrix &other) {
+	if (this->GetRows() != other.GetRows() || this->GetCols() != other.GetCols())
+		throw S21MatrixException(DIFF_SIZE);
+}
+
+/**
+ * @brief Add other matrix to current
+ * @param other - the matrix that will be added
+ */
+void S21Matrix::SumMatrix(const S21Matrix& other) {
+	this->HaveSameSize(other);
+
+	for (int i = 0; i < rows_; ++i) {
+		for (int j = 0; j < cols_; ++j) {
+			matrix_[i][j] = matrix_[i][j] + other.matrix_[i][j];
+		}
+	}
+}
+
+/**
+ * @brief Overload of '+' for matrices
+ * @param other - the matrix that will be added
+ * @return Matrix with result of addition
+ */
+S21Matrix S21Matrix::operator+(const S21Matrix &other) const {
+	S21Matrix result(*this);
+	result.SumMatrix(other);
+	return result;
 }
 
 /**
@@ -187,17 +223,46 @@ const char *S21MatrixException::what() const noexcept {
  */
 int main() {
   try {
-    S21Matrix m1(5, 5);
+    S21Matrix m1(3, 3);
     m1.FillByOrder();
     std::cout << "m1" << std::endl;
     m1.Print();
     std::cout << std::endl;
 
-    S21Matrix m3 = std::move(m1);
-    std::cout << "m3" << std::endl;
-    m3.Print();
-    std::cout << std::endl;
-  }
+		S21Matrix m2(3, 3);
+		m2.FillByOrder();
+		std::cout << "m2" << std::endl;
+		m2.Print();
+		std::cout << std::endl;
+
+		std::cout << "sum m1 and m2" << std::endl;
+		m1.SumMatrix(m2);
+		m1.Print();
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+
+		S21Matrix m3(3, 3);
+		m3.FillByOrder();
+		std::cout << "m3" << std::endl;
+		m3.Print();
+		std::cout << std::endl;
+
+		S21Matrix m4(3, 3);
+		m4.FillByOrder();
+		std::cout << "m4" << std::endl;
+		m4.Print();
+		std::cout << std::endl;
+
+		S21Matrix res(3, 3);
+		res = m3 + m4;
+		res.Print();
+		std::cout << std::endl;
+
+//		std::cout << "sum m3 and m4" << std::endl;
+//		m3.SumMatrix(m4);
+//		m3.Print();
+	}
 
   catch (std::exception &ex) {
     std::cout << "Exception Caught: " << ex.what() << std::endl;
