@@ -189,22 +189,22 @@ const char *S21MatrixException::what() const noexcept {
  * @param other - the matrix to be compared with
  */
 void S21Matrix::HaveSameSize(const S21Matrix &other) {
-	if (this->GetRows() != other.GetRows() || this->GetCols() != other.GetCols())
-		throw S21MatrixException(DIFF_SIZE);
+  if (this->GetRows() != other.GetRows() || this->GetCols() != other.GetCols())
+    throw S21MatrixException(DIFF_SIZE);
 }
 
 /**
  * @brief Add other matrix to current
  * @param other - the matrix that will be added
  */
-void S21Matrix::SumMatrix(const S21Matrix& other) {
-	this->HaveSameSize(other);
+void S21Matrix::SumMatrix(const S21Matrix &other) {
+  this->HaveSameSize(other);
 
-	for (int i = 0; i < rows_; ++i) {
-		for (int j = 0; j < cols_; ++j) {
-			matrix_[i][j] = matrix_[i][j] + other.matrix_[i][j];
-		}
-	}
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      matrix_[i][j] = matrix_[i][j] + other.matrix_[i][j];
+    }
+  }
 }
 
 /**
@@ -213,9 +213,57 @@ void S21Matrix::SumMatrix(const S21Matrix& other) {
  * @return Matrix with result of addition
  */
 S21Matrix S21Matrix::operator+(const S21Matrix &other) const {
-	S21Matrix result(*this);
-	result.SumMatrix(other);
-	return result;
+  S21Matrix result(*this);
+  result.SumMatrix(other);
+  return result;
+}
+
+/**
+ * @brief Multiplies the matrix by a number 'num'
+ * @param num - the number by which the matrix will be multiplied
+ */
+void S21Matrix::MulNumber(const double num) {
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      matrix_[i][j] *= num;
+    }
+  }
+}
+
+/**
+ * @brief Overload of '*' for matrices that will be multiply by a number 'num'
+ * @param num - the number by which the matrix will be multiplied
+ * @return Matrix with result of multiplication
+ */
+S21Matrix S21Matrix::operator*(const double num) const {
+  S21Matrix result(*this);
+  result.MulNumber(num);
+  return result;
+}
+
+/**
+ * @brief Subtract other matrix from current
+ * @param other - the matrix that will be subtract
+ */
+void S21Matrix::SubMatrix(const S21Matrix &other) {
+  this->HaveSameSize(other);
+
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < cols_; ++j) {
+      matrix_[i][j] = matrix_[i][j] - other.matrix_[i][j];
+    }
+  }
+}
+
+/**
+ * @brief Overload of '-' for matrices
+ * @param other - the matrix that will be subtract
+ * @return Matrix with result of subtraction
+ */
+S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
+  S21Matrix result(*this);
+  result.SubMatrix(other);
+  return result;
 }
 
 /**
@@ -229,40 +277,23 @@ int main() {
     m1.Print();
     std::cout << std::endl;
 
-		S21Matrix m2(3, 3);
-		m2.FillByOrder();
-		std::cout << "m2" << std::endl;
-		m2.Print();
-		std::cout << std::endl;
+    S21Matrix m2(3, 3);
+    m2.FillByOrder();
+    m2.MulNumber(2.5);
+    std::cout << "m2" << std::endl;
+    m2.Print();
+    std::cout << std::endl;
 
-		std::cout << "sum m1 and m2" << std::endl;
-		m1.SumMatrix(m2);
-		m1.Print();
-		std::cout << std::endl;
-		std::cout << std::endl;
+    std::cout << "result" << std::endl;
+    //		m1.SubMatrix(m2);
+    //		m1.Print();
+    //		std::cout << std::endl;
+    //		std::cout << std::endl;
 
-
-		S21Matrix m3(3, 3);
-		m3.FillByOrder();
-		std::cout << "m3" << std::endl;
-		m3.Print();
-		std::cout << std::endl;
-
-		S21Matrix m4(3, 3);
-		m4.FillByOrder();
-		std::cout << "m4" << std::endl;
-		m4.Print();
-		std::cout << std::endl;
-
-		S21Matrix res(3, 3);
-		res = m3 + m4;
-		res.Print();
-		std::cout << std::endl;
-
-//		std::cout << "sum m3 and m4" << std::endl;
-//		m3.SumMatrix(m4);
-//		m3.Print();
-	}
+    S21Matrix res(3, 3);
+    res = m1 * 2.9;
+    res.Print();
+  }
 
   catch (std::exception &ex) {
     std::cout << "Exception Caught: " << ex.what() << std::endl;

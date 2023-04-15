@@ -49,16 +49,20 @@ class S21Matrix {
   S21Matrix(S21Matrix&& other) noexcept;
   ~S21Matrix();
 
-	S21Matrix& operator=(const S21Matrix& other);
-	S21Matrix operator+(const S21Matrix& other) const;
+  S21Matrix& operator=(const S21Matrix& other);
+  S21Matrix operator+(const S21Matrix& other) const;
+  S21Matrix operator-(const S21Matrix& other) const;
+  S21Matrix operator*(const double num) const;
 
-	void SumMatrix(const S21Matrix& other);
+  void SumMatrix(const S21Matrix& other);
+  void SubMatrix(const S21Matrix& other);
+  void MulNumber(const double num);
 
   double** NewArrayOfElements() const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
 
-	void HaveSameSize(const S21Matrix &other);
+  void HaveSameSize(const S21Matrix& other);
 
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }
