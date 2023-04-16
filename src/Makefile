@@ -26,11 +26,13 @@
 #   - re:				remove all generated files and recompile library
 
 NAME	:= s21_matrix_oop.a
-HEADER	:= s21_matrix_oop.h
+HEADERS	:= s21_matrix_oop.h \
+		   s21_matrix_exception.h
 
 CC		:= gcc
 CFLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
-SRCS	:= s21_matrix_oop.cc
+SRCS	:= s21_matrix_oop.cc \
+		   s21_matrix_exception.cc
 OBJS	:= $(SRCS:.cc=.o)
 TEST	:= test
 
@@ -51,7 +53,7 @@ s21_matrix_oop.a: $(OBJS)
 		@clear
 		ar rcs $(NAME) $(OBJS)
 
-%.o: %.cc $(HEADER)
+%.o: %.cc $(HEADERS)
 		$(CC) $(CFLAGS) -c $< -o $@
 
 test: $(NAME)
@@ -60,14 +62,14 @@ test: $(NAME)
 		./$(TEST).out
 
 lint: $(NAME)
-		clang-format -i $(SRCS) $(HEADER)
+		clang-format -i $(SRCS) $(HEADERS)
 
 check: $(NAME)
 		@clear
 		@echo ---------------------CPPCHECK---------------------
-		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADER) $(SRCS)
+		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADERS) $(SRCS)
 		@echo -------------------CLANG-FORMAT-------------------
-		clang-format -n $(SRCS) $(HEADER)
+		clang-format -n $(SRCS) $(HEADERS)
 		@echo -------------------MEMORY_LEAKS-------------------
 		$(CC) $(CFLAGS) -g $(SRCS) $(NAME) -o $(TEST).out
 		CK_FORK=no leaks --atExit -- ./$(TEST).out

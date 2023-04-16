@@ -17,22 +17,12 @@
  * limitations under the License.
  */
 
-#ifndef __S21MATRIX_H__
-#define __S21MATRIX_H__
+#ifndef SRC_S21_MATRIX_OOP_H_
+#define SRC_S21_MATRIX_OOP_H_
 
 #include <cstring>
-#include <exception>
 #include <iostream>
-
-/**
- * @brief Numeric error codes for exceptions
- */
-enum error_codes {
-  OK = 0,
-  INCORRECT_ROWS = 1,
-  INCORRECT_COLS = 2,
-  DIFF_SIZE = 3,
-};
+#include "s21_matrix_exception.h"
 
 /**
  * @brief Implementation of the matrix
@@ -58,10 +48,10 @@ class S21Matrix {
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
 
+	// вынести в приват
   double** NewArrayOfElements() const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
-
   void HaveSameSize(const S21Matrix& other);
 
   int GetRows() const { return rows_; }
@@ -72,22 +62,4 @@ class S21Matrix {
   void Print();
 };
 
-/**
- * @brief Handling exception class
- */
-class S21MatrixException : public std::exception {
- private:
-  int error_code_;
-  const char* comment_low_rows_ = "The number of rows is lower than 1";
-  const char* comment_low_cols_ = "The number of columns is lower than 1";
-  const char* comment_diff_size_ =
-      "The operation cannot be called for matrices of different sizes";
-
- public:
-  explicit S21MatrixException(int error_code);
-  S21MatrixException(const S21MatrixException& other) noexcept;
-
-  const char* what() const noexcept override;
-};
-
-#endif
+#endif  // SRC_S21_MATRIX_OOP_H_
