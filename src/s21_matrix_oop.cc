@@ -52,7 +52,7 @@ S21Matrix::S21Matrix(const S21Matrix &other)
 }
 
 /**
- * @brief Copy elements of matrix other
+ * @brief Copy elements from other matrix
  * @param other - reference to the matrix whose elements will be copied
  */
 void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
@@ -236,35 +236,35 @@ S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
 /**
  * @brief Check the current work
  */
-int main() {
-  try {
-    S21Matrix m1(3, 3);
-    m1.FillByOrder();
-    std::cout << "m1" << std::endl;
-    m1.Print();
-    std::cout << std::endl;
-
-    S21Matrix m2(3, 3);
-    m2.FillByOrder();
-    m2.MulNumber(2.5);
-    std::cout << "m2" << std::endl;
-    m2.Print();
-    std::cout << std::endl;
-
-    std::cout << "result" << std::endl;
-    //		m1.SubMatrix(m2);
-    //		m1.Print();
-    //		std::cout << std::endl;
-    //		std::cout << std::endl;
-
-    S21Matrix res(3, 3);
-    res = m1 * 2.9;
-    res.Print();
-  }
-
-  catch (std::exception &ex) {
-    std::cout << "Exception Caught: " << ex.what() << std::endl;
-  }
-
-  return 0;
-}
+//int main() {
+//  try {
+//    S21Matrix m1(3, 3);
+//    m1.FillByOrder();
+//    std::cout << "m1" << std::endl;
+//    m1.Print();
+//    std::cout << std::endl;
+//
+//    S21Matrix m2(0, 3);
+//    m2.FillByOrder();
+//    m2.MulNumber(2.5);
+//    std::cout << "m2" << std::endl;
+//    m2.Print();
+//    std::cout << std::endl;
+//
+//    std::cout << "result" << std::endl;
+//    m1.SubMatrix(m2);
+//    m1.Print();
+//    std::cout << std::endl;
+//    std::cout << std::endl;
+//
+//    //    S21Matrix res(3, 3);
+//    //    res = m1 * 2.9;
+//    //    res.Print();
+//  }
+//
+//  catch (std::exception &ex) {
+//    std::cout << "Exception Caught: " << ex.what() << std::endl;
+//  }
+//
+//  return 0;
+//}

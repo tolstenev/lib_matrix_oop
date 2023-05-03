@@ -25,16 +25,19 @@
 #   - fclean:			remove all generated files
 #   - re:				remove all generated files and recompile library
 
-NAME	:= s21_matrix_oop.a
-HEADERS	:= s21_matrix_oop.h \
-		   s21_matrix_exception.h
+LIB_NAME	:= s21_matrix_oop.a
+HEADERS		:= s21_matrix_oop.h \
+			   s21_matrix_exception.h
 
-CC		:= gcc
-CFLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
-SRCS	:= s21_matrix_oop.cc \
-		   s21_matrix_exception.cc
-OBJS	:= $(SRCS:.cc=.o)
-TEST	:= test
+CC			:= gcc
+CPP_FLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
+GTEST_FLAGS	:= -lgtest
+SRCS		:= s21_matrix_oop.cc \
+			   s21_matrix_exception.cc
+OBJS		:= $(SRCS:.cc=.o)
+TEST		:= test
+TEST_NAME	:= s21_matrix_oop_unit_test
+SRC_TEST	:= $(TEST_NAME).cc
 
 .PHONY: all test check check_valgrind clean fclean re
 
@@ -49,45 +52,50 @@ info:
 		@echo "  fclean:           remove all generated files"
 		@echo "  re:               remove all generated files and recompile library"
 
-s21_matrix_oop.a: $(OBJS)
+LIB_NAME: $(OBJS)
 		@clear
-		ar rcs $(NAME) $(OBJS)
+		ar rcs $(LIB_NAME) $(OBJS)
 
 %.o: %.cc $(HEADERS)
-		$(CC) $(CFLAGS) -c $< -o $@
+		$(CC) $(CPP_FLAGS) -c $< -o $@
 
-test: $(NAME)
+test: LIB_NAME
 		@clear
-		$(CC) $(CFLAGS) $(SRCS) $(NAME) -o $(TEST).out
+		$(CC) $(CPP_FLAGS) $(SRCS) $(LIB_NAME) -o $(TEST).out
 		./$(TEST).out
 
-lint: $(NAME)
-		clang-format -i $(SRCS) $(HEADERS)
+gt: $(SRC_TEST) LIB_NAME
+		@clear
+		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
+		./$(TEST_NAME).out
 
-check: $(NAME)
+lint: LIB_NAME
+		clang-format -i $(SRCS) $(HEADERS) $(SRC_TEST)
+
+check: LIB_NAME
 		@clear
 		@echo ---------------------CPPCHECK---------------------
-		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADERS) $(SRCS)
+		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADERS) $(SRCS) $(SRC_TEST)
 		@echo -------------------CLANG-FORMAT-------------------
-		clang-format -n $(SRCS) $(HEADERS)
+		clang-format -n $(SRCS) $(HEADERS) $(SRC_TEST)
 		@echo -------------------MEMORY_LEAKS-------------------
-		$(CC) $(CFLAGS) -g $(SRCS) $(NAME) -o $(TEST).out
+		$(CC) $(CPP_FLAGS) -g $(SRCS) $(LIB_NAME) -o $(TEST).out
 		CK_FORK=no leaks --atExit -- ./$(TEST).out
 
-check_valgrind: $(NAME)
+check_valgrind: LIB_NAME
 		@clear
 		@echo -------------------MEMORY_LEAKS-------------------
-		$(CC) -g $(SRC_TEST) $(NAME) $(CHECK_FLAGS) -o $(TEST)
+		$(CC) -g $(SRC_TEST) $(LIB_NAME) $(CHECK_FLAGS) -o $(TEST)
 		CK_FORK=no valgrind --leak-check=full -s ./$(TEST)
 
 clean:
-		rm -rf $(OBJS) ./$(TEST).out
+		rm -rf $(OBJS) ./$(TEST).out ./$(TEST_NAME).out *.gcda *.gcno
 		@clear
 
 fclean: clean
-		rm -rf $(NAME)
+		rm -rf $(LIB_NAME)
 		@clear
 
 re:
 		$(MAKE) fclean
-		$(MAKE) $(NAME)
+		$(MAKE) $(LIB_NAME)

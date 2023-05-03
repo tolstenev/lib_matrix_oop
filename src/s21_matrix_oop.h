@@ -22,6 +22,7 @@
 
 #include <cstring>
 #include <iostream>
+
 #include "s21_matrix_exception.h"
 
 /**
@@ -31,6 +32,12 @@ class S21Matrix {
  private:
   int rows_, cols_;
   double** matrix_;
+
+ private:
+  double** NewArrayOfElements() const;
+  void DeleteArrayOfElements();
+  void CopyArrayOfElements(const S21Matrix& other);
+  void HaveSameSize(const S21Matrix& other);
 
  public:
   S21Matrix();
@@ -47,12 +54,6 @@ class S21Matrix {
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
-
-	// вынести в приват
-  double** NewArrayOfElements() const;
-  void DeleteArrayOfElements();
-  void CopyArrayOfElements(const S21Matrix& other);
-  void HaveSameSize(const S21Matrix& other);
 
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }

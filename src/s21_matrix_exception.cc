@@ -24,7 +24,7 @@
  * @param error_code - the numeric code of error
  */
 S21MatrixException::S21MatrixException(int error_code) {
-	error_code_ = error_code;
+  error_code_ = error_code;
 }
 
 /**
@@ -32,23 +32,13 @@ S21MatrixException::S21MatrixException(int error_code) {
  * @param other
  */
 S21MatrixException::S21MatrixException(
-	const S21MatrixException &other) noexcept {
-	error_code_ = other.error_code_;
+    const S21MatrixException &other) noexcept {
+  error_code_ = other.error_code_;
 }
 
 /**
  * @brief Get the string to identifying exception
  */
 const char *S21MatrixException::what() const noexcept {
-	const char *comment;
-	if (error_code_ == INCORRECT_ROWS)
-		comment = comment_low_rows_;
-	else if (error_code_ == INCORRECT_COLS)
-		comment = comment_low_cols_;
-	else if (error_code_ == DIFF_SIZE)
-		comment = comment_diff_size_;
-	else
-		comment = "Undefiend error";
-	return comment;
+  return error_comments_[error_code_];
 }
-
