@@ -20,10 +20,14 @@
 #ifndef SRC_S21_MATRIX_OOP_H_
 #define SRC_S21_MATRIX_OOP_H_
 
+#include <math.h>
+
 #include <cstring>
 #include <iostream>
 
 #include "s21_matrix_exception.h"
+
+#define EPS 1e-07
 
 /**
  * @brief Numeric error codes for exceptions
@@ -61,7 +65,9 @@ class S21Matrix {
   S21Matrix operator+(const S21Matrix& other) const;
   S21Matrix operator-(const S21Matrix& other) const;
   S21Matrix operator*(const double num) const;
+  double& operator()(int i, int j);
 
+  bool EqMatrix(const S21Matrix& other);
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
@@ -69,6 +75,7 @@ class S21Matrix {
 
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }
+  double GetVal(int row, int col) const { return matrix_[row][col]; }
 
   void FillByOrder();
   void FillWithOne();

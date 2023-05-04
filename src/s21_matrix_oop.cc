@@ -262,19 +262,47 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   matrix_ = tmp;
 }
 
+double &S21Matrix::operator()(int row, int col) {
+  if (!(0 < row || row <= rows_) || !(0 < col || col <= cols_))
+    throw S21MatrixException(OUTSIDE_INDEX);
+  return matrix_[row][col];
+}
+
+bool S21Matrix::EqMatrix(const S21Matrix &other) {
+  bool is_equal = true;
+  if (rows_ != other.rows_ && cols_ != other.cols_) {
+    is_equal = false;
+  } else {
+    for (int i = 0; (i < rows_) && is_equal; ++i) {
+      for (int j = 0; (j < cols_) && is_equal; ++j) {
+        if (fabs(matrix_[i][j] - other.matrix_[i][j]) > EPS) {
+          is_equal = false;
+        }
+      }
+    }
+  }
+  return is_equal;
+}
+
 /**
  * @brief Check the current work
  */
 int main() {
   try {
-    S21Matrix m1(3, 2);
-    m1.FillByOrder();
+    S21Matrix m1(3, 1);
+    //    m1.FillByOrder();
+    m1(0, 0) = 0.5;
+    m1(1, 0) = -42;
+    m1(2, 0) = 21;
     std::cout << "m1" << std::endl;
     m1.Print();
     std::cout << std::endl;
 
-    S21Matrix m2(2, 3);
-    m2.FillByOrder();
+    S21Matrix m2(1, 3);
+    //    m2.FillByOrder();
+    m2(0, 0) = 4.8;
+    m2(0, 1) = 15.16;
+    m2(0, 2) = 23.42;
     std::cout << "m2" << std::endl;
     m2.Print();
     std::cout << std::endl;
@@ -283,6 +311,20 @@ int main() {
     m1.MulMatrix(m2);
     m1.Print();
     std::cout << std::endl;
+
+    S21Matrix result(3, 3);
+    result(0, 0) = 2.4;
+    result(0, 1) = 7.58;
+    result(0, 2) = 11.71;
+    result(1, 0) = -201.6;
+    result(1, 1) = -636.72;
+    result(1, 2) = -983.64;
+    result(2, 0) = 100.8;
+    result(2, 1) = 318.36;
+    result(2, 2) = 491.82;
+
+    std::cout << "equal " << m1.EqMatrix(result) << std::endl;
+
     std::cout << std::endl;
   }
 
