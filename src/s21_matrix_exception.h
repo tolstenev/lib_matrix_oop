@@ -26,10 +26,13 @@
  * @brief Numeric error codes for exceptions
  */
 enum error_codes {
-  OK = 0,
+  MOCK_OF_ERROR_CODE = 0,
   INCORRECT_ROWS = 1,
   INCORRECT_COLS = 2,
-  DIFF_SIZE = 3,
+  DIFF_SIZE_SUM = 3,
+  DIFF_SIZE_SUB = 4,
+  DIFF_SIZE_MUL_MATRIX = 5,
+  NUMBER_OF_ERROR_CODES  // To get amount of elements of enum
 };
 
 /**
@@ -38,14 +41,20 @@ enum error_codes {
 class S21MatrixException : public std::exception {
  private:
   int error_code_;
-  const char* error_comments_[4] = {
-      "Undefined error",
-      /* 1 (INCORRECT_ROWS) */
+  const char* error_comments_[NUMBER_OF_ERROR_CODES] = {
+      /* 0 MOCK */
+      "",
+      /* 1 INCORRECT_ROWS */
       "The number of rows is lower than 1",
       /* 2 INCORRECT_COLS */
       "The number of columns is lower than 1",
-      /* 3 DIFF_SIZE */
-      "The operation was rejected. Matrices have different sizes"};
+      /* 3 DIFF_SIZE_SUM */
+      "The addition was rejected. Matrices have different sizes",
+      /* 4 DIFF_SIZE_SUB */
+      "The subtraction was rejected. Matrices have different sizes",
+      /* 5 DIFF_SIZE_MUL_MATRIX */
+      "The multiplication of matrices was rejected. Matrices have different "
+      "sizes"};
 
  public:
   explicit S21MatrixException(int error_code);

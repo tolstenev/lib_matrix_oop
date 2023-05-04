@@ -22,7 +22,8 @@
 /**
  * @brief Default constructor
  */
-S21Matrix::S21Matrix() : rows_(3), cols_(3), matrix_(NewArrayOfElements()) {}
+S21Matrix::S21Matrix()
+    : rows_(3), cols_(3), matrix_(NewArrayOfElements(3, 3)) {}
 
 /**
  * @brief Parameterized constructor
@@ -37,7 +38,7 @@ S21Matrix::S21Matrix(int rows, int cols) {
   } else {
     rows_ = rows;
     cols_ = cols;
-    matrix_ = NewArrayOfElements();
+    matrix_ = NewArrayOfElements(rows, cols);
   }
 }
 
@@ -47,7 +48,7 @@ S21Matrix::S21Matrix(int rows, int cols) {
  */
 S21Matrix::S21Matrix(const S21Matrix &other)
     : rows_(other.rows_), cols_(other.cols_) {
-  matrix_ = NewArrayOfElements();
+  matrix_ = NewArrayOfElements(other.rows_, other.cols_);
   CopyArrayOfElements(other);
 }
 
@@ -118,10 +119,10 @@ void S21Matrix::Print() {
  * @brief Allocate memory for matrix elements
  * @return Pointer to the allocated memory
  */
-double **S21Matrix::NewArrayOfElements() const {
-  auto elements = new double *[rows_]();
-  for (int i = 0; i < rows_; ++i) {
-    elements[i] = new double[cols_]();
+double **S21Matrix::NewArrayOfElements(int rows, int cols) const {
+  auto elements = new double *[rows]();
+  for (int i = 0; i < rows; ++i) {
+    elements[i] = new double[cols]();
   }
   return elements;
 }
@@ -146,18 +147,29 @@ void S21Matrix::DeleteArrayOfElements() {
 S21Matrix &S21Matrix::operator=(
     const S21Matrix &other) {  // TODO: Add self-assignment properly
   DeleteArrayOfElements();
-  NewArrayOfElements();
+  NewArrayOfElements(other.rows_, other.cols_);
   CopyArrayOfElements(other);
   return *this;
 }
 
 /**
- * @brief Compare the current matrix size with other
+ * @brief Compare the current matrix size with other for different operation
+ * @param type_of_operation - numeric code of operation described in enum
+ * 'types_of_operation' (SUM = 1, SUB = 2, etc.)
  * @param other - the matrix to be compared with
  */
-void S21Matrix::HaveSameSize(const S21Matrix &other) {
-  if (this->GetRows() != other.GetRows() || this->GetCols() != other.GetCols())
-    throw S21MatrixException(DIFF_SIZE);
+void S21Matrix::CheckSizesFor(int type_of_operation,
+                              const S21Matrix &other) const {
+  if (this->GetRows() != other.GetRows() ||
+      this->GetCols() != other.GetCols()) {
+    if (type_of_operation == SUM) throw S21MatrixException(DIFF_SIZE_SUM);
+    if (type_of_operation == SUB) throw S21MatrixException(DIFF_SIZE_SUB);
+  }
+  if (this->GetRows() != other.GetCols() ||
+      this->GetCols() != other.GetRows()) {
+    if (type_of_operation == MUL_MATRIX)
+      throw S21MatrixException(DIFF_SIZE_MUL_MATRIX);
+  }
 }
 
 /**
@@ -165,7 +177,7 @@ void S21Matrix::HaveSameSize(const S21Matrix &other) {
  * @param other - the matrix that will be added
  */
 void S21Matrix::SumMatrix(const S21Matrix &other) {
-  this->HaveSameSize(other);
+  CheckSizesFor(SUM, other);
 
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
@@ -213,7 +225,7 @@ S21Matrix S21Matrix::operator*(const double num) const {
  * @param other - the matrix that will be subtract
  */
 void S21Matrix::SubMatrix(const S21Matrix &other) {
-  this->HaveSameSize(other);
+  CheckSizesFor(SUB, other);
 
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
@@ -233,38 +245,50 @@ S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
   return result;
 }
 
+void S21Matrix::MulMatrix(const S21Matrix &other) {
+  CheckSizesFor(MUL_MATRIX, other);
+
+  double **tmp = NewArrayOfElements(rows_, other.cols_);
+  for (int i = 0; i < rows_; ++i) {
+    for (int j = 0; j < other.cols_; ++j) {
+      for (int k = 0; k < cols_; ++k) {
+        tmp[i][j] += matrix_[i][k] * other.matrix_[k][j];
+      }
+    }
+  }
+
+  DeleteArrayOfElements();
+  cols_ = other.cols_;
+  matrix_ = tmp;
+}
+
 /**
  * @brief Check the current work
  */
-//int main() {
-//  try {
-//    S21Matrix m1(3, 3);
-//    m1.FillByOrder();
-//    std::cout << "m1" << std::endl;
-//    m1.Print();
-//    std::cout << std::endl;
-//
-//    S21Matrix m2(0, 3);
-//    m2.FillByOrder();
-//    m2.MulNumber(2.5);
-//    std::cout << "m2" << std::endl;
-//    m2.Print();
-//    std::cout << std::endl;
-//
-//    std::cout << "result" << std::endl;
-//    m1.SubMatrix(m2);
-//    m1.Print();
-//    std::cout << std::endl;
-//    std::cout << std::endl;
-//
-//    //    S21Matrix res(3, 3);
-//    //    res = m1 * 2.9;
-//    //    res.Print();
-//  }
-//
-//  catch (std::exception &ex) {
-//    std::cout << "Exception Caught: " << ex.what() << std::endl;
-//  }
-//
-//  return 0;
-//}
+int main() {
+  try {
+    S21Matrix m1(3, 2);
+    m1.FillByOrder();
+    std::cout << "m1" << std::endl;
+    m1.Print();
+    std::cout << std::endl;
+
+    S21Matrix m2(2, 3);
+    m2.FillByOrder();
+    std::cout << "m2" << std::endl;
+    m2.Print();
+    std::cout << std::endl;
+
+    std::cout << "result" << std::endl;
+    m1.MulMatrix(m2);
+    m1.Print();
+    std::cout << std::endl;
+    std::cout << std::endl;
+  }
+
+  catch (std::exception &ex) {
+    std::cout << "Exception Caught: " << ex.what() << std::endl;
+  }
+
+  return 0;
+}

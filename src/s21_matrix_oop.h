@@ -26,6 +26,17 @@
 #include "s21_matrix_exception.h"
 
 /**
+ * @brief Numeric error codes for exceptions
+ */
+enum types_of_operation {
+  MOCK_OF_TYPE_OPERATION = 0,
+  SUM = 1,
+  SUB = 2,
+  MUL_MATRIX = 3,
+  NUMBER_OF_OPERATIONS  // To get amount of elements of enum
+};
+
+/**
  * @brief Implementation of the matrix
  */
 class S21Matrix {
@@ -34,10 +45,10 @@ class S21Matrix {
   double** matrix_;
 
  private:
-  double** NewArrayOfElements() const;
+  double** NewArrayOfElements(int rows, int cols) const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
-  void HaveSameSize(const S21Matrix& other);
+  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
 
  public:
   S21Matrix();
@@ -54,6 +65,7 @@ class S21Matrix {
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
+  void MulMatrix(const S21Matrix& other);
 
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }
