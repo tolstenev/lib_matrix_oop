@@ -58,9 +58,7 @@ S21Matrix::S21Matrix(const S21Matrix &other)
  * @brief Move constructor
  * @param other
  */
-S21Matrix::S21Matrix(S21Matrix &&other)
-
-    noexcept {
+S21Matrix::S21Matrix(S21Matrix &&other) noexcept {
   rows_ = other.rows_;
   cols_ = other.cols_;
   matrix_ = other.matrix_;
@@ -184,6 +182,16 @@ double &S21Matrix::operator()(int row, int col) {
   return matrix_[row][col];
 }
 
+//bool operator==(const S21Matrix& other) const;
+
+//S21Matrix& operator+=(const S21Matrix& other);
+
+//S21Matrix& operator-=(const S21Matrix& other);
+
+//S21Matrix& operator*=(const double num);
+
+//S21Matrix& operator*=(const S21Matrix& other);
+
 /* Core methods --------------------------------------------------------*/
 
 /**
@@ -268,6 +276,14 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   cols_ = other.cols_;
   matrix_ = tmp;
 }
+
+//S21Matrix S21Matrix::Transpose() {}
+
+//S21Matrix S21Matrix::CalcComplements() {}
+
+//double S21Matrix::Determinant() {}
+
+//S21Matrix S21Matrix::InverseMatrix() {}
 
 /* Help methods ---------------------------------------------------------*/
 

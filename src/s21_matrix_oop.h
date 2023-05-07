@@ -44,40 +44,58 @@ enum types_of_operation {
  * @brief Implementation of the matrix
  */
 class S21Matrix {
- private:
+private:
   int rows_, cols_;
   double** matrix_;
 
- private:
+private:
+  /* Memory management functions -----------------------------------------*/
   double** NewArrayOfElements(int rows, int cols) const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
-  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
 
- public:
+  /* Help methods --------------------------------------------------------*/
+  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
+//  ...method for resize matrix...
+
+public:
+  /* Constructors and destructors ----------------------------------------*/
   S21Matrix();
   S21Matrix(int rows, int cols);
   S21Matrix(const S21Matrix& other);
   S21Matrix(S21Matrix&& other) noexcept;
   ~S21Matrix();
 
+  /* Overloads -----------------------------------------------------------*/
   S21Matrix& operator=(const S21Matrix& other);
   S21Matrix operator+(const S21Matrix& other) const;
   S21Matrix operator-(const S21Matrix& other) const;
   S21Matrix operator*(const double num) const;
-  S21Matrix operator*(const S21Matrix &other) const;
+  S21Matrix operator*(const S21Matrix& other) const;
   double& operator()(int row, int col);
+//  bool operator==(const S21Matrix& other) const;
+//  S21Matrix& operator+=(const S21Matrix& other);
+//  S21Matrix& operator-=(const S21Matrix& other);
+//  S21Matrix& operator*=(const double num);
+//  S21Matrix& operator*=(const S21Matrix& other);
 
+  /* Core methods --------------------------------------------------------*/
   bool EqMatrix(const S21Matrix& other);
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
   void MulMatrix(const S21Matrix& other);
+//  S21Matrix Transpose();
+//  S21Matrix CalcComplements();
+//  double Determinant();
+//  S21Matrix InverseMatrix();
 
+  /* Accessors and mutators ---------------------------------------------*/
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }
   double GetVal(int row, int col) const { return matrix_[row][col]; }
 
+  /* Additional methods -------------------------------------------------*/
   void FillByOrder();
   void FillWithOne();
   void Print();
