@@ -245,6 +245,10 @@ S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
   return result;
 }
 
+/**
+ * @brief Multiplies a matrix by the other one
+ * @param other - the matrix that will be multiplied
+ */
 void S21Matrix::MulMatrix(const S21Matrix &other) {
   CheckSizesFor(MUL_MATRIX, other);
 
@@ -262,12 +266,35 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   matrix_ = tmp;
 }
 
+/**
+ * @brief Overload of '*' for matrices
+ * @param other - the matrix that will be multiplied
+ * @return Matrix with result of multiplication
+ */
+S21Matrix S21Matrix::operator*(const S21Matrix &other) const {
+  S21Matrix result(*this);
+  result.MulMatrix(other);
+  return result;
+}
+
+/**
+ * Overload of '()' for indexation by matrix elements (row, column)
+ * @param row - index of row
+ * @param col - index of column
+ * @return The element of matrix with idexes (row, col)
+ */
 double &S21Matrix::operator()(int row, int col) {
   if (!(0 < row || row <= rows_) || !(0 < col || col <= cols_))
     throw S21MatrixException(OUTSIDE_INDEX);
   return matrix_[row][col];
 }
 
+/**
+ * Checks matrix for equality with each other
+ * @param other - the matrix that will be compared
+ * @return true - martices is equal;
+ *         false - martices is different.
+ */
 bool S21Matrix::EqMatrix(const S21Matrix &other) {
   bool is_equal = true;
   if (rows_ != other.rows_ && cols_ != other.cols_) {
@@ -284,46 +311,25 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) {
   return is_equal;
 }
 
-/**
- * @brief Check the current work
- */
+
+/*
+
 int main() {
   try {
-    S21Matrix m1(3, 1);
-    //    m1.FillByOrder();
-    m1(0, 0) = 0.5;
-    m1(1, 0) = -42;
-    m1(2, 0) = 21;
-    std::cout << "m1" << std::endl;
-    m1.Print();
+    S21Matrix matrix_1(1, 2);
+    matrix_1(0, 0) = 4;
+    matrix_1(0, 1) = 8;
+    std::cout << "matrix_1" << std::endl;
+    matrix_1.Print();
     std::cout << std::endl;
 
-    S21Matrix m2(1, 3);
-    //    m2.FillByOrder();
-    m2(0, 0) = 4.8;
-    m2(0, 1) = 15.16;
-    m2(0, 2) = 23.42;
-    std::cout << "m2" << std::endl;
-    m2.Print();
+    S21Matrix matrix_2(2, 1);
+    matrix_2(0, 0) = 15;
+    matrix_2(1, 0) = 16;
+    std::cout << "matrix_2" << std::endl;
+    matrix_2.Print();
     std::cout << std::endl;
 
-    std::cout << "result" << std::endl;
-    m1.MulMatrix(m2);
-    m1.Print();
-    std::cout << std::endl;
-
-    S21Matrix result(3, 3);
-    result(0, 0) = 2.4;
-    result(0, 1) = 7.58;
-    result(0, 2) = 11.71;
-    result(1, 0) = -201.6;
-    result(1, 1) = -636.72;
-    result(1, 2) = -983.64;
-    result(2, 0) = 100.8;
-    result(2, 1) = 318.36;
-    result(2, 2) = 491.82;
-
-    std::cout << "equal " << m1.EqMatrix(result) << std::endl;
 
     std::cout << std::endl;
   }
@@ -334,3 +340,4 @@ int main() {
 
   return 0;
 }
+*/

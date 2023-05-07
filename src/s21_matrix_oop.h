@@ -65,7 +65,8 @@ class S21Matrix {
   S21Matrix operator+(const S21Matrix& other) const;
   S21Matrix operator-(const S21Matrix& other) const;
   S21Matrix operator*(const double num) const;
-  double& operator()(int i, int j);
+  S21Matrix operator*(const S21Matrix &other) const;
+  double& operator()(int row, int col);
 
   bool EqMatrix(const S21Matrix& other);
   void SumMatrix(const S21Matrix& other);
