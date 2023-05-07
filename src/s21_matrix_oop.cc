@@ -182,15 +182,55 @@ double &S21Matrix::operator()(int row, int col) {
   return matrix_[row][col];
 }
 
-//bool operator==(const S21Matrix& other) const;
+/**
+ * Checks for matrices equality
+ * @param other - the matrix that will be compared
+ * @return true - martices is equal;
+ *         false - martices is different.
+ */
+bool S21Matrix::operator==(const S21Matrix& other) {
+  return this->EqMatrix(other);
+}
 
-//S21Matrix& operator+=(const S21Matrix& other);
+/**
+ * Addition assignment
+ * @param other - the matrix that will be added
+ * @return reference to the added matrix
+ */
+S21Matrix& S21Matrix::operator+=(const S21Matrix& other) {
+  SumMatrix(other);
+  return *this;
+}
 
-//S21Matrix& operator-=(const S21Matrix& other);
+/**
+ * Difference assignment
+ * @param other - the matrix that will be subtract
+ * @return reference to the subtracted matrix
+ */
+S21Matrix& S21Matrix::operator-=(const S21Matrix& other) {
+  SubMatrix(other);
+  return *this;
+}
 
-//S21Matrix& operator*=(const double num);
+/**
+ * Multiplication by number assignment
+ * @param num - the number by which the matrix will be multiplied
+ * @return reference to the multiplied matrix
+ */
+S21Matrix& S21Matrix::operator*=(const double num) {
+  MulNumber(num);
+  return *this;
+}
 
-//S21Matrix& operator*=(const S21Matrix& other);
+/**
+ * Multiplication by matrix assignment
+ * @param other - the matrix that will be multiplied
+ * @return reference to the multiplied matrix
+ */
+S21Matrix& S21Matrix::operator*=(const S21Matrix& other) {
+  MulMatrix(other);
+  return *this;
+}
 
 /* Core methods --------------------------------------------------------*/
 
