@@ -69,7 +69,7 @@ gt: $(SRC_TEST) LIB_NAME
 		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
 		./$(TEST_NAME).out
 
-lint: LIB_NAME
+lint: $(SRCS) $(HEADERS) $(SRC_TEST)
 		clang-format -i $(SRCS) $(HEADERS) $(SRC_TEST)
 
 check: LIB_NAME
@@ -79,14 +79,14 @@ check: LIB_NAME
 		@echo -------------------CLANG-FORMAT-------------------
 		clang-format -n $(SRCS) $(HEADERS) $(SRC_TEST)
 		@echo -------------------MEMORY_LEAKS-------------------
-		$(CC) $(CPP_FLAGS) -g $(SRCS) $(LIB_NAME) -o $(TEST).out
-		CK_FORK=no leaks --atExit -- ./$(TEST).out
+		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) -g $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
+		CK_FORK=no leaks --atExit -- ./$(TEST_NAME).out
 
 check_valgrind: LIB_NAME
 		@clear
 		@echo -------------------MEMORY_LEAKS-------------------
-		$(CC) -g $(SRC_TEST) $(LIB_NAME) $(CHECK_FLAGS) -o $(TEST)
-		CK_FORK=no valgrind --leak-check=full -s ./$(TEST)
+		$(CC) -g $(SRC_TEST) $(LIB_NAME) $(CHECK_FLAGS) -o $(TEST_NAME)
+		CK_FORK=no valgrind --leak-check=full -s ./$(TEST_NAME)
 
 clean:
 		rm -rf $(OBJS) ./$(TEST).out ./$(TEST_NAME).out *.gcda *.gcno

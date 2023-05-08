@@ -44,11 +44,11 @@ enum types_of_operation {
  * @brief Implementation of the matrix
  */
 class S21Matrix {
-private:
+ private:
   int rows_, cols_;
   double** matrix_;
 
-private:
+ private:
   /* Memory management functions -----------------------------------------*/
   double** NewArrayOfElements(int rows, int cols) const;
   void DeleteArrayOfElements();
@@ -56,9 +56,9 @@ private:
 
   /* Help methods --------------------------------------------------------*/
   void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
-//  ...method for resize matrix...
+  //  ...method for resize matrix...
 
-public:
+ public:
   /* Constructors and destructors ----------------------------------------*/
   S21Matrix();
   S21Matrix(int rows, int cols);
@@ -85,19 +85,23 @@ public:
   void SubMatrix(const S21Matrix& other);
   void MulNumber(const double num);
   void MulMatrix(const S21Matrix& other);
-//  S21Matrix Transpose();
-//  S21Matrix CalcComplements();
-//  double Determinant();
-//  S21Matrix InverseMatrix();
+  //  S21Matrix Transpose();
+  //  S21Matrix CalcComplements();
+  //  double Determinant();
+  //  S21Matrix InverseMatrix();
 
   /* Accessors and mutators ---------------------------------------------*/
   int GetRows() const { return rows_; }
   int GetCols() const { return cols_; }
   double GetVal(int row, int col) const { return matrix_[row][col]; }
+  //  void SetRows(int new_rows);
+  //  void SetCols(int new_cols);
 
-  /* Additional methods -------------------------------------------------*/
+  /* Additional methods for testing -------------------------------------*/
   void FillByOrder();
+  void FillByEven();
   void FillWithOne();
+  void FillWithZero();
   void Print();
 };
 
