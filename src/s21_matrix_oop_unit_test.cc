@@ -4,20 +4,49 @@
 
 #include "s21_matrix_oop.h"
 
+TEST(AccessorMutator, GetRowsColsSuccess) {
+  S21Matrix matrix(3, 2);
+  EXPECT_EQ(matrix.GetRows(), 3);
+  EXPECT_EQ(matrix.GetCols(), 2);
+}
+
 TEST(Constructors, ParameterizedSuccess) {
   S21Matrix matrix(3, 4);
   EXPECT_EQ(matrix.GetRows(), 3);
   EXPECT_EQ(matrix.GetCols(), 4);
 }
 
-TEST(Constructors, ParameterizedFail) {
-  EXPECT_ANY_THROW(S21Matrix matrix(0, 0));
+TEST(Constructors, ParameterizedRowsFail) {
+  EXPECT_THROW(S21Matrix matrix(0, 1), std::invalid_argument);
+}
+
+TEST(Constructors, ParameterizedColsFail) {
+  EXPECT_THROW(S21Matrix matrix(1, 0), std::invalid_argument);
 }
 
 TEST(Constructors, DefaultSuccess) {
   S21Matrix matrix;
   EXPECT_GE(matrix.GetRows(), 1);
   EXPECT_GE(matrix.GetCols(), 1);
+}
+
+TEST(Constructors, CopySuccess) {
+  S21Matrix matrix_1(2, 1);
+  S21Matrix matrix_2(matrix_1);
+
+  EXPECT_EQ(matrix_2.GetRows(), 2);
+  EXPECT_EQ(matrix_2.GetCols(), 1);
+  EXPECT_EQ(matrix_2.EqMatrix(matrix_1), true);
+}
+
+TEST(Constructors, MoveSuccess) {
+  S21Matrix matrix_1(2, 1);
+  S21Matrix matrix_2(std::move(matrix_1));
+
+  EXPECT_EQ(matrix_2.GetRows(), 2);
+  EXPECT_EQ(matrix_2.GetCols(), 1);
+  EXPECT_EQ(matrix_1.GetRows(), 0);
+  EXPECT_EQ(matrix_1.GetCols(), 0);
 }
 
 TEST(Other, IndexingSuccess) {
@@ -29,7 +58,7 @@ TEST(Other, IndexingSuccess) {
 
 TEST(Other, IndexingException) {
   S21Matrix matrix_1(2, 2);
-  EXPECT_ANY_THROW(matrix_1(3, 3));
+  ASSERT_ANY_THROW(matrix_1(3, 3));
 }
 
 TEST(Comparing, EqMatrixTrue) {
@@ -222,6 +251,59 @@ TEST(Overloads, MulMatrixSuccess) {
   result = matrix_1 * matrix_2;
 
   EXPECT_DOUBLE_EQ(result.GetVal(0, 0), 188.0);
+}
+
+TEST(AssignmentCalculations, SumMatrixSuccess) {
+  S21Matrix matrix_1(2, 2);
+  matrix_1.FillByOrder();
+  S21Matrix matrix_2(2, 2);
+  matrix_2.FillByOrder();
+
+  matrix_1 += matrix_2;
+
+  EXPECT_DOUBLE_EQ(matrix_1(0, 0), 2.0);
+  EXPECT_DOUBLE_EQ(matrix_1(0, 1), 4.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 0), 6.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 1), 8.0);
+}
+
+TEST(AssignmentCalculations, SubMatrixSuccess2) {
+  S21Matrix matrix_1(2, 2);
+  matrix_1.FillByEven();
+  S21Matrix matrix_2(2, 2);
+  matrix_2.FillByOrder();
+
+  matrix_1 -= matrix_2;
+
+  EXPECT_DOUBLE_EQ(matrix_1(0, 0), 1.0);
+  EXPECT_DOUBLE_EQ(matrix_1(0, 1), 2.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 0), 3.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 1), 4.0);
+}
+
+TEST(AssignmentCalculations, MulNumberSuccess) {
+  S21Matrix matrix_1(2, 2);
+  matrix_1.FillByOrder();
+
+  matrix_1 *= 2.0;
+
+  EXPECT_DOUBLE_EQ(matrix_1(0, 0), 2.0);
+  EXPECT_DOUBLE_EQ(matrix_1(0, 1), 4.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 0), 6.0);
+  EXPECT_DOUBLE_EQ(matrix_1(1, 1), 8.0);
+}
+
+TEST(AssignmentCalculations, MulMatrixSuccess) {
+  S21Matrix matrix_1(1, 2);
+  matrix_1(0, 0) = 4;
+  matrix_1(0, 1) = 8;
+  S21Matrix matrix_2(2, 1);
+  matrix_2(0, 0) = 15;
+  matrix_2(1, 0) = 16;
+
+  matrix_1 *= matrix_2;
+
+  EXPECT_DOUBLE_EQ(matrix_1.GetVal(0, 0), 188.0);
 }
 
 int main(int argc, char **argv) {

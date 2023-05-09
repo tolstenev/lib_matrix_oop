@@ -34,9 +34,9 @@ S21Matrix::S21Matrix()
  */
 S21Matrix::S21Matrix(int rows, int cols) {
   if (rows < 1) {
-    throw S21MatrixException(INCORRECT_ROWS);
+    throw std::invalid_argument("The number of rows is lower than 1");
   } else if (cols < 1) {
-    throw S21MatrixException(INCORRECT_COLS);
+    throw std::invalid_argument("The number of columns is lower than 1");
   } else {
     rows_ = rows;
     cols_ = cols;
@@ -65,7 +65,7 @@ S21Matrix::S21Matrix(S21Matrix &&other) noexcept {
 
   other.rows_ = 0;
   other.cols_ = 0;
-  other.DeleteArrayOfElements();
+  other.matrix_ = nullptr;
 }
 
 /**
@@ -100,7 +100,7 @@ void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
 }
 
 /**
- * @brief Allocate memory for matrix elements
+ * @brief Delete allocated memory for matrix elements
  */
 void S21Matrix::DeleteArrayOfElements() {
   if (matrix_) {
@@ -180,7 +180,8 @@ S21Matrix S21Matrix::operator*(const S21Matrix &other) const {
  */
 double &S21Matrix::operator()(int row, int col) {
   if (row < 0 || row >= rows_ || col < 0 || col >= cols_)
-    throw S21MatrixException(OUTSIDE_INDEX);
+    throw std::out_of_range(
+        "Attempt to access to element of matrix by index outside of the range");
   return matrix_[row][col];
 }
 
@@ -339,13 +340,19 @@ void S21Matrix::CheckSizesFor(int type_of_operation,
                               const S21Matrix &other) const {
   if (this->GetRows() != other.GetRows() ||
       this->GetCols() != other.GetCols()) {
-    if (type_of_operation == SUM) throw S21MatrixException(DIFF_SIZE_SUM);
-    if (type_of_operation == SUB) throw S21MatrixException(DIFF_SIZE_SUB);
+    if (type_of_operation == SUM)
+      throw std::logic_error(
+          "The addition was rejected. Matrices have different sizes");
+    if (type_of_operation == SUB)
+      throw std::logic_error(
+          "The subtraction was rejected. Matrices have different sizes");
   }
   if (this->GetRows() != other.GetCols() ||
       this->GetCols() != other.GetRows()) {
     if (type_of_operation == MUL_MATRIX)
-      throw S21MatrixException(DIFF_SIZE_MUL_MATRIX);
+      throw std::logic_error(
+          "The multiplication of matrices was rejected. Matrices have "
+          "different sizes");
   }
 }
 

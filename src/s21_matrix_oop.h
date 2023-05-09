@@ -25,8 +25,6 @@
 #include <cstring>
 #include <iostream>
 
-#include "s21_matrix_exception.h"
-
 #define EPS 1e-07
 
 /**

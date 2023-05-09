@@ -26,18 +26,19 @@
 #   - re:				remove all generated files and recompile library
 
 LIB_NAME	:= s21_matrix_oop.a
-HEADERS		:= s21_matrix_oop.h \
-			   s21_matrix_exception.h
+HEADERS		:= s21_matrix_oop.h
 
 CC			:= gcc
 CPP_FLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
 GTEST_FLAGS	:= -lgtest
-SRCS		:= s21_matrix_oop.cc \
-			   s21_matrix_exception.cc
+SRCS		:= s21_matrix_oop.cc
 OBJS		:= $(SRCS:.cc=.o)
 TEST		:= test
 TEST_NAME	:= s21_matrix_oop_unit_test
 SRC_TEST	:= $(TEST_NAME).cc
+REPORT		:= GcovReport
+GCOV_FLAGS	:= -fprofile-arcs -ftest-coverage
+
 
 .PHONY: all test check check_valgrind clean fclean re
 
@@ -52,27 +53,40 @@ info:
 		@echo "  fclean:           remove all generated files"
 		@echo "  re:               remove all generated files and recompile library"
 
-LIB_NAME: $(OBJS)
+s21_matrix_oop.a: $(OBJS)
 		@clear
 		ar rcs $(LIB_NAME) $(OBJS)
 
 %.o: %.cc $(HEADERS)
 		$(CC) $(CPP_FLAGS) -c $< -o $@
 
-test: LIB_NAME
+test: $(LIB_NAME)
 		@clear
 		$(CC) $(CPP_FLAGS) $(SRCS) $(LIB_NAME) -o $(TEST).out
 		./$(TEST).out
 
-gt: $(SRC_TEST) LIB_NAME
+gt: $(SRC_TEST) $(LIB_NAME)
 		@clear
 		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
 		./$(TEST_NAME).out
 
+gcov_report: $(LIB_NAME)
+		@clear
+		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(GCOV_FLAGS) $(SRC_TEST) $(SRCS) -o $(REPORT)
+		./$(REPORT)
+		lcov -t "$(REPORT)" -o $(REPORT).info -c -d .
+		genhtml -o report $(REPORT).info
+		rm -rf ./*.gcno ./*.gcda ./$(REPORT).*
+		@echo Code coverage report generated. To view the report via web-browser, enter the command \"open ./report/index.html\"
+
+open: gcov_report
+		@clear
+		open ./report/index.html
+
 lint: $(SRCS) $(HEADERS) $(SRC_TEST)
 		clang-format -i $(SRCS) $(HEADERS) $(SRC_TEST)
 
-check: LIB_NAME
+check: $(LIB_NAME)
 		@clear
 		@echo ---------------------CPPCHECK---------------------
 		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADERS) $(SRCS) $(SRC_TEST)
@@ -82,14 +96,14 @@ check: LIB_NAME
 		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) -g $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
 		CK_FORK=no leaks --atExit -- ./$(TEST_NAME).out
 
-check_valgrind: LIB_NAME
+check_valgrind: $(LIB_NAME)
 		@clear
 		@echo -------------------MEMORY_LEAKS-------------------
-		$(CC) -g $(SRC_TEST) $(LIB_NAME) $(CHECK_FLAGS) -o $(TEST_NAME)
-		CK_FORK=no valgrind --leak-check=full -s ./$(TEST_NAME)
+		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) -g $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
+		CK_FORK=no valgrind --leak-check=full -s ./$(TEST_NAME).out
 
 clean:
-		rm -rf $(OBJS) ./$(TEST).out ./$(TEST_NAME).out *.gcda *.gcno
+		rm -rf $(OBJS) $(TEST).out $(TEST_NAME).out *.gcda *.gcno $(TEST_NAME).out.dSYM report $(REPORT)
 		@clear
 
 fclean: clean

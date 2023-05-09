@@ -1,6 +1,7 @@
 materials/
 .idea/
 cmake-build-debug/
+s21_matrix_oop_unit_test.out.dSYM/
 CMakeLists.txt
 .out
 .o
