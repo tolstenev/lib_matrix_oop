@@ -102,7 +102,6 @@ class S21Matrix {
   /* Additional methods for testing -------------------------------------*/
   void FillByOrder();
   void FillByEven();
-  void FillWithOne();
   void FillWithZero();
   void Print();
 };

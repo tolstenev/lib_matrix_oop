@@ -392,7 +392,12 @@ TEST(Special, CalcComplementsSuccess) {
   EXPECT_DOUBLE_EQ(result(2, 2), 4.0);
 }
 
-TEST(Special, CalcComplementsFail) {
+TEST(Special, CalcComplementsFail1) {
+  S21Matrix matrix(2, 1);
+  EXPECT_ANY_THROW(matrix.CalcComplements());
+}
+
+TEST(Special, CalcComplementsFail2) {
   S21Matrix matrix(1, 1);
   EXPECT_ANY_THROW(matrix.CalcComplements());
 }
@@ -420,6 +425,20 @@ TEST(Special, InverseMatrixSuccess) {
   EXPECT_DOUBLE_EQ(result(2, 0), 27.0);
   EXPECT_DOUBLE_EQ(result(2, 1), -29.0);
   EXPECT_DOUBLE_EQ(result(2, 2), 24.0);
+}
+
+TEST(Special, InverseMatrixFail) {
+  S21Matrix matrix(3, 3);
+  matrix(0, 0) = 0.0;
+  matrix(0, 1) = 0.0;
+  matrix(0, 2) = 0.0;
+  matrix(1, 0) = 6.0;
+  matrix(1, 1) = 3.0;
+  matrix(1, 2) = 4.0;
+  matrix(2, 0) = 5.0;
+  matrix(2, 1) = -2.0;
+  matrix(2, 2) = -3.0;
+  EXPECT_ANY_THROW(matrix.InverseMatrix());
 }
 
 int main(int argc, char **argv) {

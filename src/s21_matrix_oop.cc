@@ -472,17 +472,6 @@ void S21Matrix::FillByEven() {
 }
 
 /**
- * @brief Fills the matrix with numbers by 1
- */
-void S21Matrix::FillWithOne() {
-  for (int i = 0; i < rows_; ++i) {
-    for (int j = 0; j < cols_; ++j) {
-      matrix_[i][j] = 1.0;
-    }
-  }
-}
-
-/**
  * @brief Fills the matrix with numbers by 0
  */
 void S21Matrix::FillWithZero() {
@@ -525,9 +514,6 @@ int main() {
     result.Print();
     std::cout << std::endl;
 
-//    std::cout << "matrix_for_minor" << std::endl;
-//    matrix_for_minor.Print();
-//    std::cout << std::endl;
   }
 
   catch (std::exception &ex) {
