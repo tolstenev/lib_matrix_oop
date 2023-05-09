@@ -334,7 +334,34 @@ S21Matrix S21Matrix::Transpose() {
   return tmp;
 }
 
-// S21Matrix S21Matrix::CalcComplements() {}
+S21Matrix S21Matrix::CalcComplements() {
+  if (rows_ != cols_)
+    throw std::logic_error(
+        "Attempt to calculate complements for non-square "
+        "matrix");
+  if (rows_ < 2 || cols_ < 2)
+    throw std::logic_error(
+        "Attempt to calculate complements for matrix with one element");
+  S21Matrix result(rows_, cols_);
+  for (int i = 0; i < result.rows_; ++i) {
+    for (int j = 0; j < result.cols_; ++j) {
+      result.matrix_[i][j] = CalcOneComplement(*this, i, j);
+    }
+  }
+  return result;
+}
+
+double S21Matrix::CalcOneComplement(const S21Matrix &src, int row_skip,
+                                    int col_skip) {
+  double sign = ((row_skip + col_skip) % 2) ? -1 : 1;
+  return (sign * CalcMinor(src, row_skip, col_skip));
+}
+
+double S21Matrix::CalcMinor(const S21Matrix &src, int row_skip, int col_skip) {
+  S21Matrix matrix_for_minor(src.rows_ - 1, src.cols_ - 1);
+  matrix_for_minor.FillForMinor(src, row_skip, col_skip);
+  return matrix_for_minor.CalcDeterminant();
+}
 
 double S21Matrix::Determinant() {
   if (rows_ != cols_)
@@ -470,26 +497,26 @@ void S21Matrix::Print() {
 /*
 int main() {
   try {
-    S21Matrix src(3, 3);
-    src(0, 0) = 0.123;
-    src(0, 1) = 5.21;
-    src(0, 2) = 9.515;
-    src(1, 0) = 4.815;
-    src(1, 1) = 42.0;
-    src(1, 2) = 23.42;
-    src(2, 0) = 0.99;
-    src(2, 1) = 710;
-    src(2, 2) = 21.0;
-    S21Matrix matrix_for_minor(2, 2);
-    matrix_for_minor.FillForMinor(src, 0, 0);
+    S21Matrix matrix(3, 3);
+    matrix(0, 0) = 1.0;
+    matrix(0, 1) = 2.0;
+    matrix(0, 2) = 3.0;
+    matrix(1, 0) = 0.0;
+    matrix(1, 1) = 4.0;
+    matrix(1, 2) = 2.0;
+    matrix(2, 0) = 5.0;
+    matrix(2, 1) = 2.0;
+    matrix(2, 2) = 1.0;
 
-    std::cout << "src" << std::endl;
-    src.Print();
+    S21Matrix result = matrix.CalcComplements();
+
+    std::cout << "result" << std::endl;
+    result.Print();
     std::cout << std::endl;
 
-    std::cout << "matrix_for_minor" << std::endl;
-    matrix_for_minor.Print();
-    std::cout << std::endl;
+//    std::cout << "matrix_for_minor" << std::endl;
+//    matrix_for_minor.Print();
+//    std::cout << std::endl;
   }
 
   catch (std::exception &ex) {

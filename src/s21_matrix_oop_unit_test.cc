@@ -367,6 +367,36 @@ TEST(Special, DeterminantFail) {
   EXPECT_ANY_THROW(matrix.Determinant());
 }
 
+TEST(Special, CalcComplementsSuccess) {
+  S21Matrix matrix(3, 3);
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(0, 2) = 3.0;
+  matrix(1, 0) = 0.0;
+  matrix(1, 1) = 4.0;
+  matrix(1, 2) = 2.0;
+  matrix(2, 0) = 5.0;
+  matrix(2, 1) = 2.0;
+  matrix(2, 2) = 1.0;
+
+  S21Matrix result = matrix.CalcComplements();
+
+  EXPECT_DOUBLE_EQ(result(0, 0), 0.0);
+  EXPECT_DOUBLE_EQ(result(0, 1), 10.0);
+  EXPECT_DOUBLE_EQ(result(0, 2), -20.0);
+  EXPECT_DOUBLE_EQ(result(1, 0), 4.0);
+  EXPECT_DOUBLE_EQ(result(1, 1), -14.0);
+  EXPECT_DOUBLE_EQ(result(1, 2), 8.0);
+  EXPECT_DOUBLE_EQ(result(2, 0), -8.0);
+  EXPECT_DOUBLE_EQ(result(2, 1), -2.0);
+  EXPECT_DOUBLE_EQ(result(2, 2), 4.0);
+}
+
+TEST(Special, CalcComplementsFail1) {
+  S21Matrix matrix(1, 1);
+  EXPECT_ANY_THROW(matrix.CalcComplements());
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
