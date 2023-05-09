@@ -320,7 +320,19 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   matrix_ = tmp;
 }
 
-// S21Matrix S21Matrix::Transpose() {}
+/**
+ * @brief Creates a new transposed matrix from the current one and returns it
+ * @return transposed matrix
+ */
+S21Matrix S21Matrix::Transpose() {
+  S21Matrix tmp(cols_, rows_);
+  for (int i = 0; i < tmp.rows_; ++i) {
+    for (int j = 0; j < tmp.cols_; ++j) {
+      tmp.matrix_[i][j] = matrix_[j][i];
+    }
+  }
+  return tmp;
+}
 
 // S21Matrix S21Matrix::CalcComplements() {}
 
@@ -419,26 +431,30 @@ void S21Matrix::Print() {
 /*
 int main() {
   try {
-    S21Matrix matrix_1(2, 2);
-    matrix_1.FillWithOne();
+    S21Matrix matrix(2, 3);
+    matrix.FillByOrder();
 
-    matrix_1.MulNumber(2.0);
-
-    std::cout << "matrix_1" << std::endl;
-    matrix_1.Print();
+    std::cout << "matrix" << std::endl;
+    matrix.Print();
     std::cout << std::endl;
 
-//    S21Matrix matrix_2(2, 2);
-//    matrix_2.FillByOrder();
-//    std::cout << "matrix_2" << std::endl;
-//    matrix_2.Print();
-//    std::cout << std::endl;
-//
-//    matrix_1.SumMatrix(matrix_2);
-//
-//    std::cout << "matrix_1" << std::endl;
-//    matrix_1.Print();
-//    std::cout << std::endl;
+    S21Matrix result = matrix.Transpose();
+
+    std::cout << "result" << std::endl;
+    result.Print();
+    std::cout << std::endl;
+
+    //    S21Matrix matrix_2(2, 2);
+    //    matrix_2.FillByOrder();
+    //    std::cout << "matrix_2" << std::endl;
+    //    matrix_2.Print();
+    //    std::cout << std::endl;
+    //
+    //    matrix_1.SumMatrix(matrix_2);
+    //
+    //    std::cout << "matrix_1" << std::endl;
+    //    matrix_1.Print();
+    //    std::cout << std::endl;
   }
 
   catch (std::exception &ex) {

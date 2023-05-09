@@ -306,6 +306,21 @@ TEST(AssignmentCalculations, MulMatrixSuccess) {
   EXPECT_DOUBLE_EQ(matrix_1.GetVal(0, 0), 188.0);
 }
 
+TEST(Special, TransposeSuccess) {
+  S21Matrix matrix(2, 3);
+  matrix.FillByOrder();
+  S21Matrix result = matrix.Transpose();
+
+  EXPECT_EQ(result.GetRows(), 3);
+  EXPECT_EQ(result.GetCols(), 2);
+  EXPECT_DOUBLE_EQ(result(0, 0), 1.0);
+  EXPECT_DOUBLE_EQ(result(0, 1), 4.0);
+  EXPECT_DOUBLE_EQ(result(1, 0), 2.0);
+  EXPECT_DOUBLE_EQ(result(1, 1), 5.0);
+  EXPECT_DOUBLE_EQ(result(2, 0), 3.0);
+  EXPECT_DOUBLE_EQ(result(2, 1), 6.0);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
