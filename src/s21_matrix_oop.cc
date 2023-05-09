@@ -336,7 +336,46 @@ S21Matrix S21Matrix::Transpose() {
 
 // S21Matrix S21Matrix::CalcComplements() {}
 
-// double S21Matrix::Determinant() {}
+double S21Matrix::Determinant() {
+  if (rows_ != cols_)
+    throw std::logic_error(
+        "Attempt to calculate determinant for non-square "
+        "matrix");
+  return CalcDeterminant();
+}
+
+double S21Matrix::CalcDeterminant() {
+  double result = 0.0;
+  if (rows_ == 1) {
+    result = matrix_[0][0];
+  } else if (rows_ == 2) {
+    result = matrix_[0][0] * matrix_[1][1] - matrix_[0][1] * matrix_[1][0];
+  } else {
+    double sign = 1.0;
+    S21Matrix matrix_for_minor(rows_ - 1, cols_ - 1);
+    for (int j = 0; j < rows_; ++j) {
+      matrix_for_minor.FillForMinor(*this, 0, j);
+      result += sign * matrix_[0][j] * matrix_for_minor.CalcDeterminant();
+      sign *= -1.0;
+    }
+  }
+  return result;
+}
+
+void S21Matrix::FillForMinor(const S21Matrix &src, int row_skip, int col_skip) {
+  int i_minor = 0;
+  int j_minor = 0;
+  for (int i_src = 0; i_src < src.rows_; ++i_src) {
+    if (i_src == row_skip) continue;
+    j_minor = 0;
+    for (int j_src = 0; j_src < src.cols_; ++j_src) {
+      if (j_src == col_skip) continue;
+      matrix_[i_minor][j_minor] = src.matrix_[i_src][j_src];
+      ++j_minor;
+    }
+    ++i_minor;
+  }
+}
 
 // S21Matrix S21Matrix::InverseMatrix() {}
 
@@ -431,30 +470,26 @@ void S21Matrix::Print() {
 /*
 int main() {
   try {
-    S21Matrix matrix(2, 3);
-    matrix.FillByOrder();
+    S21Matrix src(3, 3);
+    src(0, 0) = 0.123;
+    src(0, 1) = 5.21;
+    src(0, 2) = 9.515;
+    src(1, 0) = 4.815;
+    src(1, 1) = 42.0;
+    src(1, 2) = 23.42;
+    src(2, 0) = 0.99;
+    src(2, 1) = 710;
+    src(2, 2) = 21.0;
+    S21Matrix matrix_for_minor(2, 2);
+    matrix_for_minor.FillForMinor(src, 0, 0);
 
-    std::cout << "matrix" << std::endl;
-    matrix.Print();
+    std::cout << "src" << std::endl;
+    src.Print();
     std::cout << std::endl;
 
-    S21Matrix result = matrix.Transpose();
-
-    std::cout << "result" << std::endl;
-    result.Print();
+    std::cout << "matrix_for_minor" << std::endl;
+    matrix_for_minor.Print();
     std::cout << std::endl;
-
-    //    S21Matrix matrix_2(2, 2);
-    //    matrix_2.FillByOrder();
-    //    std::cout << "matrix_2" << std::endl;
-    //    matrix_2.Print();
-    //    std::cout << std::endl;
-    //
-    //    matrix_1.SumMatrix(matrix_2);
-    //
-    //    std::cout << "matrix_1" << std::endl;
-    //    matrix_1.Print();
-    //    std::cout << std::endl;
   }
 
   catch (std::exception &ex) {

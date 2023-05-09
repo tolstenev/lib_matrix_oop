@@ -267,7 +267,7 @@ TEST(AssignmentCalculations, SumMatrixSuccess) {
   EXPECT_DOUBLE_EQ(matrix_1(1, 1), 8.0);
 }
 
-TEST(AssignmentCalculations, SubMatrixSuccess2) {
+TEST(AssignmentCalculations, SubMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
   matrix_1.FillByEven();
   S21Matrix matrix_2(2, 2);
@@ -319,6 +319,52 @@ TEST(Special, TransposeSuccess) {
   EXPECT_DOUBLE_EQ(result(1, 1), 5.0);
   EXPECT_DOUBLE_EQ(result(2, 0), 3.0);
   EXPECT_DOUBLE_EQ(result(2, 1), 6.0);
+}
+
+TEST(Special, DeterminantSuccess1) {
+  S21Matrix matrix(1, 1);
+  matrix(0, 0) = 23.42;
+  double result = 0.0;
+
+  result = matrix.Determinant();
+
+  EXPECT_DOUBLE_EQ(result, 23.42);
+}
+
+TEST(Special, DeterminantSuccess2) {
+  S21Matrix matrix(2, 2);
+  matrix(0, 0) = 4.0;
+  matrix(0, 1) = 8.0;
+  matrix(1, 0) = 15.0;
+  matrix(1, 1) = 16.0;
+  double result = 0.0;
+
+  result = matrix.Determinant();
+
+  EXPECT_DOUBLE_EQ(result, -56.0);
+}
+
+TEST(Special, DeterminantSuccess3) {
+  S21Matrix matrix(3, 3);
+  matrix(0, 0) = 0.123;
+  matrix(0, 1) = 5.21;
+  matrix(0, 2) = 9.515;
+  matrix(1, 0) = 4.815;
+  matrix(1, 1) = 42.0;
+  matrix(1, 2) = 23.42;
+  matrix(2, 0) = 0.99;
+  matrix(2, 1) = 710;
+  matrix(2, 2) = 21.0;
+  double result = 0.0;
+
+  result = matrix.Determinant();
+
+  EXPECT_DOUBLE_EQ(result, 29790.027318);
+}
+
+TEST(Special, DeterminantFail) {
+  S21Matrix matrix(1, 2);
+  EXPECT_ANY_THROW(matrix.Determinant());
 }
 
 int main(int argc, char **argv) {

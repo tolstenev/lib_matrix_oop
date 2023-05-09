@@ -54,6 +54,9 @@ class S21Matrix {
 
   /* Help methods --------------------------------------------------------*/
   void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
+  double CalcDeterminant();
+  void FillForMinor(const S21Matrix& src, int row_skip, int col_skip);
+
   //  ...method for resize matrix...
 
  public:
@@ -85,7 +88,7 @@ class S21Matrix {
   void MulMatrix(const S21Matrix& other);
   S21Matrix Transpose();
   //  S21Matrix CalcComplements();
-  //  double Determinant();
+  double Determinant();
   //  S21Matrix InverseMatrix();
 
   /* Accessors and mutators ---------------------------------------------*/
