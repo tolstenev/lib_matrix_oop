@@ -90,7 +90,7 @@ class S21Matrix {
   S21Matrix Transpose();
   S21Matrix CalcComplements();
   double Determinant();
-  //  S21Matrix InverseMatrix();
+  S21Matrix InverseMatrix();
 
   /* Accessors and mutators ---------------------------------------------*/
   int GetRows() const { return rows_; }

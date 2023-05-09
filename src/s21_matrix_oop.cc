@@ -339,7 +339,7 @@ S21Matrix S21Matrix::CalcComplements() {
     throw std::logic_error(
         "Attempt to calculate complements for non-square "
         "matrix");
-  if (rows_ < 2 || cols_ < 2)
+  if (rows_ < 2)
     throw std::logic_error(
         "Attempt to calculate complements for matrix with one element");
   S21Matrix result(rows_, cols_);
@@ -404,7 +404,18 @@ void S21Matrix::FillForMinor(const S21Matrix &src, int row_skip, int col_skip) {
   }
 }
 
-// S21Matrix S21Matrix::InverseMatrix() {}
+S21Matrix S21Matrix::InverseMatrix() {
+  S21Matrix result(rows_, cols_);
+  double det = this->Determinant();
+  if (det == 0.0)
+    throw std::logic_error(
+        "Impossible find inverse matrix. Determinant equals "
+        "zero");
+
+  result = this->CalcComplements().Transpose();
+  result.MulNumber(1.0 / det);
+  return result;
+}
 
 /* Help methods ---------------------------------------------------------*/
 
@@ -498,17 +509,17 @@ void S21Matrix::Print() {
 int main() {
   try {
     S21Matrix matrix(3, 3);
-    matrix(0, 0) = 1.0;
-    matrix(0, 1) = 2.0;
-    matrix(0, 2) = 3.0;
-    matrix(1, 0) = 0.0;
-    matrix(1, 1) = 4.0;
-    matrix(1, 2) = 2.0;
+    matrix(0, 0) = 2.0;
+    matrix(0, 1) = 5.0;
+    matrix(0, 2) = 7.0;
+    matrix(1, 0) = 6.0;
+    matrix(1, 1) = 3.0;
+    matrix(1, 2) = 4.0;
     matrix(2, 0) = 5.0;
-    matrix(2, 1) = 2.0;
-    matrix(2, 2) = 1.0;
+    matrix(2, 1) = -2.0;
+    matrix(2, 2) = -3.0;
 
-    S21Matrix result = matrix.CalcComplements();
+    S21Matrix result = matrix.InverseMatrix();
 
     std::cout << "result" << std::endl;
     result.Print();
