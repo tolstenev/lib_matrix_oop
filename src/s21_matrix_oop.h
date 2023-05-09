@@ -52,14 +52,6 @@ class S21Matrix {
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
 
-  /* Help methods --------------------------------------------------------*/
-  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
-  double CalcDeterminant();
-  void FillForMinor(const S21Matrix& src, int row_skip, int col_skip);
-  double CalcOneComplement(const S21Matrix& src, int row_skip, int col_skip);
-  double CalcMinor(const S21Matrix& src, int row_skip, int col_skip);
-  //  ...method for resize matrix...
-
  public:
   /* Constructors and destructors ----------------------------------------*/
   S21Matrix();
@@ -92,18 +84,27 @@ class S21Matrix {
   double Determinant();
   S21Matrix InverseMatrix();
 
-  /* Accessors and mutators ---------------------------------------------*/
-  int GetRows() const { return rows_; }
-  int GetCols() const { return cols_; }
-  double GetVal(int row, int col) const { return matrix_[row][col]; }
-  //  void SetRows(int new_rows);
-  //  void SetCols(int new_cols);
+  /* Accessors and mutators ----------------------------------------------*/
+  int GetRows() const;
+  int GetCols() const;
+  double GetVal(int row, int col) const;
+  void SetRows(int new_rows);
+  void SetCols(int new_cols);
+  void SetRowsOrCols(bool isItRow, int value);
 
-  /* Additional methods for testing -------------------------------------*/
+  /* Additional methods for testing --------------------------------------*/
   void FillByOrder();
   void FillByEven();
   void FillWithZero();
-  void Print();
+  //  void Print();
+
+ private:
+  /* Help methods --------------------------------------------------------*/
+  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
+  double CalcDeterminant();
+  void FillForMinor(const S21Matrix& src, int row_skip, int col_skip);
+  double CalcOneComplement(const S21Matrix& src, int row_skip, int col_skip);
+  double CalcMinor(const S21Matrix& src, int row_skip, int col_skip);
 };
 
 #endif  // SRC_S21_MATRIX_OOP_H_

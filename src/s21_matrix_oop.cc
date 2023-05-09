@@ -444,6 +444,37 @@ void S21Matrix::CheckSizesFor(int type_of_operation,
           "different sizes");
   }
 }
+/* Accessors and mutators -------------------------------------------------*/
+
+int S21Matrix::GetRows() const { return rows_; }
+
+int S21Matrix::GetCols() const { return cols_; }
+
+double S21Matrix::GetVal(int row, int col) const { return matrix_[row][col]; }
+
+void S21Matrix::SetRows(int new_rows) { SetRowsOrCols(true, new_rows); }
+
+void S21Matrix::SetCols(int new_cols) { SetRowsOrCols(false, new_cols); }
+
+void S21Matrix::SetRowsOrCols(bool isItRow, int value) {
+  int src_rows, new_rows, src_cols, new_cols;
+  src_rows = new_rows = rows_;
+  src_cols = new_cols = cols_;
+  if (isItRow) {
+    if (value < rows_) src_rows = value;
+    new_rows = value;
+  } else {
+    if (value < cols_) src_cols = value;
+    new_cols = value;
+  }
+  S21Matrix tmp(new_rows, new_cols);
+  for (int i = 0; i < src_rows; i++) {
+    for (int j = 0; j < src_cols; j++) {
+      tmp.matrix_[i][j] = matrix_[i][j];
+    }
+  }
+  *this = tmp;
+}
 
 /* Additional methods -----------------------------------------------------*/
 
@@ -485,14 +516,14 @@ void S21Matrix::FillWithZero() {
 /**
  * @brief Print matrix
  */
-void S21Matrix::Print() {
-  for (int i = 0; i < rows_; ++i) {
-    for (int j = 0; j < cols_; ++j) {
-      std::cout << matrix_[i][j] << '\t';
-    }
-    std::cout << std::endl;
-  }
-}
+// void S21Matrix::Print() {
+//   for (int i = 0; i < rows_; ++i) {
+//     for (int j = 0; j < cols_; ++j) {
+//       std::cout << matrix_[i][j] << '\t';
+//     }
+//     std::cout << std::endl;
+//   }
+// }
 
 /*
 int main() {
@@ -511,7 +542,7 @@ int main() {
     S21Matrix result = matrix.InverseMatrix();
 
     std::cout << "result" << std::endl;
-    result.Print();
+    matrix.Print();
     std::cout << std::endl;
 
   }

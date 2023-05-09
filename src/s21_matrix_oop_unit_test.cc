@@ -441,6 +441,49 @@ TEST(Special, InverseMatrixFail) {
   EXPECT_ANY_THROW(matrix.InverseMatrix());
 }
 
+TEST(Mutators, SetRowSuccess1) {
+  S21Matrix matrix(2, 2);
+  matrix.FillByOrder();
+
+  matrix.SetRows(1);
+
+  EXPECT_EQ(matrix.GetRows(), 1);
+  EXPECT_EQ(matrix.GetCols(), 2);
+}
+
+TEST(Mutators, SetRowSuccess2) {
+  S21Matrix matrix(2, 2);
+  matrix.FillByOrder();
+
+  matrix.SetRows(3);
+  EXPECT_EQ(matrix.GetRows(), 3);
+  EXPECT_EQ(matrix.GetCols(), 2);
+  EXPECT_DOUBLE_EQ(matrix.GetVal(2, 0), 0.0);
+  EXPECT_DOUBLE_EQ(matrix.GetVal(2, 1), 0.0);
+}
+
+TEST(Mutators, SetColSuccess1) {
+  S21Matrix matrix(2, 2);
+  matrix.FillByOrder();
+
+  matrix.SetCols(1);
+
+  EXPECT_EQ(matrix.GetRows(), 2);
+  EXPECT_EQ(matrix.GetCols(), 1);
+}
+
+TEST(Mutators, SetColSuccess2) {
+  S21Matrix matrix(2, 2);
+  matrix.FillByOrder();
+
+  matrix.SetCols(3);
+
+  EXPECT_EQ(matrix.GetRows(), 2);
+  EXPECT_EQ(matrix.GetCols(), 3);
+  EXPECT_DOUBLE_EQ(matrix.GetVal(0, 2), 0.0);
+  EXPECT_DOUBLE_EQ(matrix.GetVal(1, 2), 0.0);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
