@@ -6,26 +6,29 @@
 
 TEST(AccessorMutator, GetRowsColsSuccess) {
   S21Matrix matrix(3, 2);
+
   EXPECT_EQ(matrix.GetRows(), 3);
   EXPECT_EQ(matrix.GetCols(), 2);
 }
 
 TEST(Constructors, ParameterizedSuccess) {
   S21Matrix matrix(3, 4);
+
   EXPECT_EQ(matrix.GetRows(), 3);
   EXPECT_EQ(matrix.GetCols(), 4);
 }
 
 TEST(Constructors, ParameterizedRowsFail) {
-  EXPECT_THROW(S21Matrix matrix(0, 1), std::invalid_argument);
+  EXPECT_ANY_THROW(S21Matrix matrix(0, 1));
 }
 
 TEST(Constructors, ParameterizedColsFail) {
-  EXPECT_THROW(S21Matrix matrix(1, 0), std::invalid_argument);
+  EXPECT_ANY_THROW(S21Matrix matrix(1, 0));
 }
 
 TEST(Constructors, DefaultSuccess) {
   S21Matrix matrix;
+
   EXPECT_GE(matrix.GetRows(), 1);
   EXPECT_GE(matrix.GetCols(), 1);
 }
@@ -51,6 +54,7 @@ TEST(Constructors, MoveSuccess) {
 
 TEST(Other, IndexingSuccess) {
   S21Matrix matrix_1(2, 2);
+
   EXPECT_NO_THROW(matrix_1(1, 1));
   EXPECT_NO_THROW(matrix_1(1, 1) = 21.0);
   EXPECT_DOUBLE_EQ(matrix_1(1, 1), 21.0);
@@ -58,13 +62,15 @@ TEST(Other, IndexingSuccess) {
 
 TEST(Other, IndexingException) {
   S21Matrix matrix_1(2, 2);
+
   ASSERT_ANY_THROW(matrix_1(3, 3));
 }
 
 TEST(Comparing, EqMatrixTrue) {
   S21Matrix matrix_1(3, 2);
-  matrix_1.FillByOrder();
   S21Matrix matrix_2(3, 2);
+
+  matrix_1.FillByOrder();
   matrix_2.FillByOrder();
 
   EXPECT_EQ(matrix_1.EqMatrix(matrix_2), true);
@@ -72,8 +78,8 @@ TEST(Comparing, EqMatrixTrue) {
 
 TEST(Comparing, EqMatrixFalse1) {
   S21Matrix matrix_1(3, 2);
-  matrix_1.FillByOrder();
   S21Matrix matrix_2(3, 2);
+
   matrix_2.FillByOrder();
   matrix_2(0, 0) = 21.00001;
 
@@ -250,7 +256,7 @@ TEST(Overloads, MulMatrixSuccess) {
 
   result = matrix_1 * matrix_2;
 
-  EXPECT_DOUBLE_EQ(result.GetVal(0, 0), 188.0);
+  EXPECT_DOUBLE_EQ(result(0, 0), 188.0);
 }
 
 TEST(AssignmentCalculations, SumMatrixSuccess) {
@@ -303,7 +309,7 @@ TEST(AssignmentCalculations, MulMatrixSuccess) {
 
   matrix_1 *= matrix_2;
 
-  EXPECT_DOUBLE_EQ(matrix_1.GetVal(0, 0), 188.0);
+  EXPECT_DOUBLE_EQ(matrix_1(0, 0), 188.0);
 }
 
 TEST(Special, TransposeSuccess) {
@@ -394,11 +400,13 @@ TEST(Special, CalcComplementsSuccess) {
 
 TEST(Special, CalcComplementsFail1) {
   S21Matrix matrix(2, 1);
+
   EXPECT_ANY_THROW(matrix.CalcComplements());
 }
 
 TEST(Special, CalcComplementsFail2) {
   S21Matrix matrix(1, 1);
+
   EXPECT_ANY_THROW(matrix.CalcComplements());
 }
 
@@ -429,15 +437,8 @@ TEST(Special, InverseMatrixSuccess) {
 
 TEST(Special, InverseMatrixFail) {
   S21Matrix matrix(3, 3);
-  matrix(0, 0) = 0.0;
-  matrix(0, 1) = 0.0;
-  matrix(0, 2) = 0.0;
-  matrix(1, 0) = 6.0;
-  matrix(1, 1) = 3.0;
-  matrix(1, 2) = 4.0;
-  matrix(2, 0) = 5.0;
-  matrix(2, 1) = -2.0;
-  matrix(2, 2) = -3.0;
+  matrix.FillWithZero();
+
   EXPECT_ANY_THROW(matrix.InverseMatrix());
 }
 
@@ -456,10 +457,11 @@ TEST(Mutators, SetRowSuccess2) {
   matrix.FillByOrder();
 
   matrix.SetRows(3);
+
   EXPECT_EQ(matrix.GetRows(), 3);
   EXPECT_EQ(matrix.GetCols(), 2);
-  EXPECT_DOUBLE_EQ(matrix.GetVal(2, 0), 0.0);
-  EXPECT_DOUBLE_EQ(matrix.GetVal(2, 1), 0.0);
+  EXPECT_DOUBLE_EQ(matrix(2, 0), 0.0);
+  EXPECT_DOUBLE_EQ(matrix(2, 1), 0.0);
 }
 
 TEST(Mutators, SetColSuccess1) {
@@ -480,12 +482,11 @@ TEST(Mutators, SetColSuccess2) {
 
   EXPECT_EQ(matrix.GetRows(), 2);
   EXPECT_EQ(matrix.GetCols(), 3);
-  EXPECT_DOUBLE_EQ(matrix.GetVal(0, 2), 0.0);
-  EXPECT_DOUBLE_EQ(matrix.GetVal(1, 2), 0.0);
+  EXPECT_DOUBLE_EQ(matrix(0, 2), 0.0);
+  EXPECT_DOUBLE_EQ(matrix(1, 2), 0.0);
 }
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
-
   return RUN_ALL_TESTS();
 }

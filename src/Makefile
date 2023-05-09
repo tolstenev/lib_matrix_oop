@@ -17,13 +17,17 @@
 #  limitations under the License.
 #
 
-# Make targets:
-#   - s21_matrix_oop.a:	create the static library
-#   - test:				run unit test of library and show results
-#   - check:            check source files by 'cppcheck', 'clang-format', and looking for memory leaks by 'leaks'
-#   - clean:			remove generated files without s21_matrix_oop.a
-#   - fclean:			remove all generated files
-#   - re:				remove all generated files and recompile library
+# Available make targets:
+#  - s21_matrix_oop.a: create the static library
+#  - test:             build and run the unit test of the library and show results
+#  - check:            check source files by 'cppcheck', 'clang-format', and looking for memory leaks by 'leaks'
+#  - check_valgrind:   check memory leaks by 'valgrind'
+#  - gcov_report:      make test of the library and generate gcov report
+#  - open:             generate gcov report and open it
+#  - lint:             fix code style with clang-format
+#  - clean:            remove generated files without s21_matrix_oop.a
+#  - fclean:           remove all generated files
+#  - re:               remove all generated files and recompile library
 
 LIB_NAME	:= s21_matrix_oop.a
 HEADERS		:= s21_matrix_oop.h
@@ -40,15 +44,19 @@ REPORT		:= GcovReport
 GCOV_FLAGS	:= -fprofile-arcs -ftest-coverage
 
 
-.PHONY: all test check check_valgrind clean fclean re
+.PHONY: all test check check_valgrind lint clean fclean re
 
 all: s21_matrix_oop.a
 
 info:
 		@echo "Available make targets:"
 		@echo "  s21_matrix_oop.a: create the static library"
-		@echo "  test:             run unit test of library and show results"
+		@echo "  test:             build and run the unit test of the library and show results"
 		@echo "  check:            check source files by 'cppcheck', 'clang-format', and looking for memory leaks by 'leaks'"
+		@echo "  check_valgrind:   check memory leaks by 'valgrind'"
+		@echo "  gcov_report:      make test of the library and generate gcov report"
+		@echo "  open:             generate gcov report and open it"
+		@echo "  lint:             fix code style with clang-format"
 		@echo "  clean:            remove generated files without s21_matrix_oop.a"
 		@echo "  fclean:           remove all generated files"
 		@echo "  re:               remove all generated files and recompile library"
@@ -60,12 +68,7 @@ s21_matrix_oop.a: $(OBJS)
 %.o: %.cc $(HEADERS)
 		$(CC) $(CPP_FLAGS) -c $< -o $@
 
-test: $(LIB_NAME)
-		@clear
-		$(CC) $(CPP_FLAGS) $(SRCS) $(LIB_NAME) -o $(TEST).out
-		./$(TEST).out
-
-gt: $(SRC_TEST) $(LIB_NAME)
+test: $(SRC_TEST) $(LIB_NAME)
 		@clear
 		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
 		./$(TEST_NAME).out

@@ -20,8 +20,7 @@
 #ifndef SRC_S21_MATRIX_OOP_H_
 #define SRC_S21_MATRIX_OOP_H_
 
-#include <math.h>
-
+#include <cmath>
 #include <cstring>
 #include <iostream>
 
@@ -45,12 +44,6 @@ class S21Matrix {
  private:
   int rows_, cols_;
   double** matrix_;
-
- private:
-  /* Memory management functions -----------------------------------------*/
-  double** NewArrayOfElements(int rows, int cols) const;
-  void DeleteArrayOfElements();
-  void CopyArrayOfElements(const S21Matrix& other);
 
  public:
   /* Constructors and destructors ----------------------------------------*/
@@ -87,18 +80,21 @@ class S21Matrix {
   /* Accessors and mutators ----------------------------------------------*/
   int GetRows() const;
   int GetCols() const;
-  double GetVal(int row, int col) const;
   void SetRows(int new_rows);
   void SetCols(int new_cols);
-  void SetRowsOrCols(bool isItRow, int value);
+  void SetRowsOrCols(bool is_it_row, int value);
 
   /* Additional methods for testing --------------------------------------*/
   void FillByOrder();
   void FillByEven();
   void FillWithZero();
-  //  void Print();
 
  private:
+  /* Memory management functions -----------------------------------------*/
+  double** NewArrayOfElements(int rows, int cols) const;
+  void DeleteArrayOfElements();
+  void CopyArrayOfElements(const S21Matrix& other);
+
   /* Help methods --------------------------------------------------------*/
   void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
   double CalcDeterminant();

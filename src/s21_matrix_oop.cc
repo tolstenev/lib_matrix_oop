@@ -32,16 +32,14 @@ S21Matrix::S21Matrix()
  * @param rows - number of rows
  * @param cols - number of colomns
  */
-S21Matrix::S21Matrix(int rows, int cols) {
+S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
   if (rows < 1) {
     throw std::invalid_argument("The number of rows is lower than 1");
-  } else if (cols < 1) {
-    throw std::invalid_argument("The number of columns is lower than 1");
-  } else {
-    rows_ = rows;
-    cols_ = cols;
-    matrix_ = NewArrayOfElements(rows, cols);
   }
+  if (cols < 1) {
+    throw std::invalid_argument("The number of columns is lower than 1");
+  }
+  matrix_ = NewArrayOfElements(rows, cols);
 }
 
 /**
@@ -58,11 +56,8 @@ S21Matrix::S21Matrix(const S21Matrix &other)
  * @brief Move constructor
  * @param other
  */
-S21Matrix::S21Matrix(S21Matrix &&other) noexcept {
-  rows_ = other.rows_;
-  cols_ = other.cols_;
-  matrix_ = other.matrix_;
-
+S21Matrix::S21Matrix(S21Matrix &&other) noexcept
+    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
   other.rows_ = 0;
   other.cols_ = 0;
   other.matrix_ = nullptr;
@@ -118,13 +113,16 @@ void S21Matrix::DeleteArrayOfElements() {
  * @param other - the matrix that will be assigned
  * @return reference to the new matrix
  */
-S21Matrix &S21Matrix::operator=(
-    const S21Matrix &other) {  // TODO: Add self-assignment properly
-  DeleteArrayOfElements();
-  rows_ = other.rows_;
-  cols_ = other.cols_;
-  matrix_ = NewArrayOfElements(other.rows_, other.cols_);
-  CopyArrayOfElements(other);
+S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
+  if (rows_ != other.rows_ || cols_ != other.cols_) {
+    DeleteArrayOfElements();
+    rows_ = other.rows_;
+    cols_ = other.cols_;
+    matrix_ = NewArrayOfElements(other.rows_, other.cols_);
+  }
+  if (matrix_ != other.matrix_) {
+    CopyArrayOfElements(other);
+  }
   return *this;
 }
 
@@ -191,9 +189,7 @@ double &S21Matrix::operator()(int row, int col) {
  * @return true - martices is equal;
  *         false - martices is different.
  */
-bool S21Matrix::operator==(const S21Matrix &other) {
-  return this->EqMatrix(other);
-}
+bool S21Matrix::operator==(const S21Matrix &other) { return EqMatrix(other); }
 
 /**
  * Addition assignment
@@ -294,7 +290,7 @@ void S21Matrix::SubMatrix(const S21Matrix &other) {
 void S21Matrix::MulNumber(const double num) {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      matrix_[i][j] *= num;
+      matrix_[i][j] = matrix_[i][j] * num;
     }
   }
 }
@@ -322,7 +318,7 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
 
 /**
  * @brief Creates a new transposed matrix from the current one and returns it
- * @return transposed matrix
+ * @return the transposed matrix
  */
 S21Matrix S21Matrix::Transpose() {
   S21Matrix tmp(cols_, rows_);
@@ -334,14 +330,20 @@ S21Matrix S21Matrix::Transpose() {
   return tmp;
 }
 
+/**
+ * @brief Calculates the algebraic addition matrix of the current one and
+ * returns it
+ * @return algebraic the addition matrix
+ */
 S21Matrix S21Matrix::CalcComplements() {
-  if (rows_ != cols_)
+  if (rows_ != cols_) {
     throw std::logic_error(
-        "Attempt to calculate complements for non-square "
-        "matrix");
-  if (rows_ < 2)
+        "Attempt to calculate complements for non-square matrix");
+  }
+  if (rows_ < 2) {
     throw std::logic_error(
         "Attempt to calculate complements for matrix with one element");
+  }
   S21Matrix result(rows_, cols_);
   for (int i = 0; i < result.rows_; ++i) {
     for (int j = 0; j < result.cols_; ++j) {
@@ -351,26 +353,50 @@ S21Matrix S21Matrix::CalcComplements() {
   return result;
 }
 
+/**
+ * @brief Calculate one algebraic addition for element with index (row_skip,
+ * col_skip)
+ * @param src - source matrix
+ * @param row_skip - i index
+ * @param col_skip - j index
+ * @return the value of algebraic addition
+ */
 double S21Matrix::CalcOneComplement(const S21Matrix &src, int row_skip,
                                     int col_skip) {
   double sign = ((row_skip + col_skip) % 2) ? -1 : 1;
   return (sign * CalcMinor(src, row_skip, col_skip));
 }
 
+/**
+ * @brief Calculate minor for element with index (row_skip, col_skip)
+ * @param src - source matrix
+ * @param row_skip - i index
+ * @param col_skip - j index
+ * @return the value of minor
+ */
 double S21Matrix::CalcMinor(const S21Matrix &src, int row_skip, int col_skip) {
   S21Matrix matrix_for_minor(src.rows_ - 1, src.cols_ - 1);
   matrix_for_minor.FillForMinor(src, row_skip, col_skip);
   return matrix_for_minor.CalcDeterminant();
 }
 
+/**
+ * @brief Calculates and returns the determinant of the current matrix
+ * @return the value of determinant
+ */
 double S21Matrix::Determinant() {
-  if (rows_ != cols_)
+  if (rows_ != cols_) {
     throw std::logic_error(
-        "Attempt to calculate determinant for non-square "
-        "matrix");
+        "Attempt to calculate determinant for non-square matrix");
+  }
   return CalcDeterminant();
 }
 
+/**
+ * NOT SAFETY. USE DETERMINANT() PRIMARILY INSTEAD OF THIS.
+ * @brief Help function for recursive calls in calculation of determinant
+ * @return the value of determinant
+ */
 double S21Matrix::CalcDeterminant() {
   double result = 0.0;
   if (rows_ == 1) {
@@ -389,29 +415,43 @@ double S21Matrix::CalcDeterminant() {
   return result;
 }
 
+/**
+ * @brief Fill the current matrix with values for minor calculations. Copy
+ * elements from src matrix without 'row_skip' row and 'col_skip' column
+ * @param src - source matrix
+ * @param row_skip - i index
+ * @param col_skip - j index
+ */
 void S21Matrix::FillForMinor(const S21Matrix &src, int row_skip, int col_skip) {
-  int i_minor = 0;
-  int j_minor = 0;
-  for (int i_src = 0; i_src < src.rows_; ++i_src) {
-    if (i_src == row_skip) continue;
-    j_minor = 0;
-    for (int j_src = 0; j_src < src.cols_; ++j_src) {
-      if (j_src == col_skip) continue;
-      matrix_[i_minor][j_minor] = src.matrix_[i_src][j_src];
-      ++j_minor;
+  int iMinor = 0;
+  int jMinor = 0;
+  for (int iSrc = 0; iSrc < src.rows_; ++iSrc) {
+    if (iSrc == row_skip) {
+      continue;
     }
-    ++i_minor;
+    jMinor = 0;
+    for (int jSrc = 0; jSrc < src.cols_; ++jSrc) {
+      if (jSrc == col_skip) {
+        continue;
+      }
+      matrix_[iMinor][jMinor] = src.matrix_[iSrc][jSrc];
+      ++jMinor;
+    }
+    ++iMinor;
   }
 }
 
+/**
+ * @brief Calculates and returns the inverse matrix
+ * @return the inverse matrix
+ */
 S21Matrix S21Matrix::InverseMatrix() {
   S21Matrix result(rows_, cols_);
   double det = this->Determinant();
-  if (det == 0.0)
+  if (det == 0.0) {
     throw std::logic_error(
-        "Impossible find inverse matrix. Determinant equals "
-        "zero");
-
+        "Impossible find inverse matrix. Determinant equals zero");
+  }
   result = this->CalcComplements().Transpose();
   result.MulNumber(1.0 / det);
   return result;
@@ -429,19 +469,22 @@ void S21Matrix::CheckSizesFor(int type_of_operation,
                               const S21Matrix &other) const {
   if (this->GetRows() != other.GetRows() ||
       this->GetCols() != other.GetCols()) {
-    if (type_of_operation == SUM)
+    if (type_of_operation == SUM) {
       throw std::logic_error(
           "The addition was rejected. Matrices have different sizes");
-    if (type_of_operation == SUB)
+    }
+    if (type_of_operation == SUB) {
       throw std::logic_error(
           "The subtraction was rejected. Matrices have different sizes");
+    }
   }
   if (this->GetRows() != other.GetCols() ||
       this->GetCols() != other.GetRows()) {
-    if (type_of_operation == MUL_MATRIX)
+    if (type_of_operation == MUL_MATRIX) {
       throw std::logic_error(
           "The multiplication of matrices was rejected. Matrices have "
           "different sizes");
+    }
   }
 }
 /* Accessors and mutators -------------------------------------------------*/
@@ -450,21 +493,23 @@ int S21Matrix::GetRows() const { return rows_; }
 
 int S21Matrix::GetCols() const { return cols_; }
 
-double S21Matrix::GetVal(int row, int col) const { return matrix_[row][col]; }
-
 void S21Matrix::SetRows(int new_rows) { SetRowsOrCols(true, new_rows); }
 
 void S21Matrix::SetCols(int new_cols) { SetRowsOrCols(false, new_cols); }
 
-void S21Matrix::SetRowsOrCols(bool isItRow, int value) {
+void S21Matrix::SetRowsOrCols(bool is_it_row, int value) {
   int src_rows, new_rows, src_cols, new_cols;
   src_rows = new_rows = rows_;
   src_cols = new_cols = cols_;
-  if (isItRow) {
-    if (value < rows_) src_rows = value;
+  if (is_it_row) {
+    if (value < rows_) {
+      src_rows = value;
+    }
     new_rows = value;
   } else {
-    if (value < cols_) src_cols = value;
+    if (value < cols_) {
+      src_cols = value;
+    }
     new_cols = value;
   }
   S21Matrix tmp(new_rows, new_cols);
@@ -512,45 +557,3 @@ void S21Matrix::FillWithZero() {
     }
   }
 }
-
-/**
- * @brief Print matrix
- */
-// void S21Matrix::Print() {
-//   for (int i = 0; i < rows_; ++i) {
-//     for (int j = 0; j < cols_; ++j) {
-//       std::cout << matrix_[i][j] << '\t';
-//     }
-//     std::cout << std::endl;
-//   }
-// }
-
-/*
-int main() {
-  try {
-    S21Matrix matrix(3, 3);
-    matrix(0, 0) = 2.0;
-    matrix(0, 1) = 5.0;
-    matrix(0, 2) = 7.0;
-    matrix(1, 0) = 6.0;
-    matrix(1, 1) = 3.0;
-    matrix(1, 2) = 4.0;
-    matrix(2, 0) = 5.0;
-    matrix(2, 1) = -2.0;
-    matrix(2, 2) = -3.0;
-
-    S21Matrix result = matrix.InverseMatrix();
-
-    std::cout << "result" << std::endl;
-    matrix.Print();
-    std::cout << std::endl;
-
-  }
-
-  catch (std::exception &ex) {
-    std::cout << "Exception Caught: " << ex.what() << std::endl;
-  }
-
-  return 0;
-}
-*/
