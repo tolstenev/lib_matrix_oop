@@ -24,8 +24,7 @@
 /**
  * @brief Default constructor
  */
-S21Matrix::S21Matrix()
-    : rows_(3), cols_(3), matrix_(NewArrayOfElements(3, 3)) {}
+S21Matrix::S21Matrix() {}
 
 /**
  * @brief Parameterized constructor
@@ -46,7 +45,7 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
  * @brief Copy constructor
  * @param other - reference to the matrix that will be copied
  */
-S21Matrix::S21Matrix(const S21Matrix &other)
+S21Matrix::S21Matrix(const S21Matrix& other)
     : rows_(other.rows_), cols_(other.cols_) {
   matrix_ = NewArrayOfElements(other.rows_, other.cols_);
   CopyArrayOfElements(other);
@@ -56,7 +55,7 @@ S21Matrix::S21Matrix(const S21Matrix &other)
  * @brief Move constructor
  * @param other
  */
-S21Matrix::S21Matrix(S21Matrix &&other) noexcept
+S21Matrix::S21Matrix(S21Matrix&& other) noexcept
     : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
   other.rows_ = 0;
   other.cols_ = 0;
@@ -74,8 +73,8 @@ S21Matrix::~S21Matrix() { DeleteArrayOfElements(); }
  * @brief Allocate memory for matrix elements
  * @return Pointer to the allocated memory
  */
-double **S21Matrix::NewArrayOfElements(int rows, int cols) const {
-  auto elements = new double *[rows]();
+double** S21Matrix::NewArrayOfElements(int rows, int cols) const {
+  auto elements = new double*[rows]();
   for (int i = 0; i < rows; ++i) {
     elements[i] = new double[cols]();
   }
@@ -86,7 +85,7 @@ double **S21Matrix::NewArrayOfElements(int rows, int cols) const {
  * @brief Copy elements from other matrix
  * @param other - reference to the matrix whose elements will be copied
  */
-void S21Matrix::CopyArrayOfElements(const S21Matrix &other) {
+void S21Matrix::CopyArrayOfElements(const S21Matrix& other) {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
       matrix_[i][j] = other.matrix_[i][j];
@@ -113,14 +112,12 @@ void S21Matrix::DeleteArrayOfElements() {
  * @param other - the matrix that will be assigned
  * @return reference to the new matrix
  */
-S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
-  if (rows_ != other.rows_ || cols_ != other.cols_) {
+S21Matrix& S21Matrix::operator=(S21Matrix const& other) {
+  if (this != &other) {
     DeleteArrayOfElements();
     rows_ = other.rows_;
     cols_ = other.cols_;
     matrix_ = NewArrayOfElements(other.rows_, other.cols_);
-  }
-  if (matrix_ != other.matrix_) {
     CopyArrayOfElements(other);
   }
   return *this;
@@ -131,7 +128,7 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
  * @param other - the matrix that will be added
  * @return Matrix with result of addition
  */
-S21Matrix S21Matrix::operator+(const S21Matrix &other) const {
+S21Matrix S21Matrix::operator+(const S21Matrix& other) const {
   S21Matrix result(*this);
   result.SumMatrix(other);
   return result;
@@ -142,7 +139,7 @@ S21Matrix S21Matrix::operator+(const S21Matrix &other) const {
  * @param other - the matrix that will be subtract
  * @return Matrix with result of subtraction
  */
-S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
+S21Matrix S21Matrix::operator-(const S21Matrix& other) const {
   S21Matrix result(*this);
   result.SubMatrix(other);
   return result;
@@ -164,7 +161,7 @@ S21Matrix S21Matrix::operator*(const double num) const {
  * @param other - the matrix that will be multiplied
  * @return Matrix with result of multiplication
  */
-S21Matrix S21Matrix::operator*(const S21Matrix &other) const {
+S21Matrix S21Matrix::operator*(const S21Matrix& other) const {
   S21Matrix result(*this);
   result.MulMatrix(other);
   return result;
@@ -174,9 +171,9 @@ S21Matrix S21Matrix::operator*(const S21Matrix &other) const {
  * Overload of '()' for indexation by matrix elements (row, column)
  * @param row - index of row
  * @param col - index of column
- * @return The element of matrix with idexes (row, col)
+ * @return The element of matrix with indexes (row, col)
  */
-double &S21Matrix::operator()(int row, int col) {
+double& S21Matrix::operator()(int row, int col) {
   if (row < 0 || row >= rows_ || col < 0 || col >= cols_)
     throw std::out_of_range(
         "Attempt to access to element of matrix by index outside of the range");
@@ -189,14 +186,14 @@ double &S21Matrix::operator()(int row, int col) {
  * @return true - martices is equal;
  *         false - martices is different.
  */
-bool S21Matrix::operator==(const S21Matrix &other) { return EqMatrix(other); }
+bool S21Matrix::operator==(const S21Matrix& other) { return EqMatrix(other); }
 
 /**
  * Addition assignment
  * @param other - the matrix that will be added
  * @return reference to the added matrix
  */
-S21Matrix &S21Matrix::operator+=(const S21Matrix &other) {
+S21Matrix& S21Matrix::operator+=(const S21Matrix& other) {
   SumMatrix(other);
   return *this;
 }
@@ -206,7 +203,7 @@ S21Matrix &S21Matrix::operator+=(const S21Matrix &other) {
  * @param other - the matrix that will be subtract
  * @return reference to the subtracted matrix
  */
-S21Matrix &S21Matrix::operator-=(const S21Matrix &other) {
+S21Matrix& S21Matrix::operator-=(const S21Matrix& other) {
   SubMatrix(other);
   return *this;
 }
@@ -216,7 +213,7 @@ S21Matrix &S21Matrix::operator-=(const S21Matrix &other) {
  * @param num - the number by which the matrix will be multiplied
  * @return reference to the multiplied matrix
  */
-S21Matrix &S21Matrix::operator*=(const double num) {
+S21Matrix& S21Matrix::operator*=(const double num) {
   MulNumber(num);
   return *this;
 }
@@ -226,7 +223,7 @@ S21Matrix &S21Matrix::operator*=(const double num) {
  * @param other - the matrix that will be multiplied
  * @return reference to the multiplied matrix
  */
-S21Matrix &S21Matrix::operator*=(const S21Matrix &other) {
+S21Matrix& S21Matrix::operator*=(const S21Matrix& other) {
   MulMatrix(other);
   return *this;
 }
@@ -239,7 +236,7 @@ S21Matrix &S21Matrix::operator*=(const S21Matrix &other) {
  * @return true - martices is equal;
  *         false - martices is different.
  */
-bool S21Matrix::EqMatrix(const S21Matrix &other) {
+bool S21Matrix::EqMatrix(const S21Matrix& other) {
   bool is_equal = true;
   if (rows_ != other.rows_ || cols_ != other.cols_) {
     is_equal = false;
@@ -259,9 +256,11 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) {
  * @brief Add other matrix to current
  * @param other - the matrix that will be added
  */
-void S21Matrix::SumMatrix(const S21Matrix &other) {
-  CheckSizesFor(SUM, other);
-
+void S21Matrix::SumMatrix(const S21Matrix& other) {
+  if (rows_ != other.rows_ || cols_ != other.cols_) {
+    throw std::logic_error(
+        "The addition was rejected. Matrices have different sizes");
+  }
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
       matrix_[i][j] = matrix_[i][j] + other.matrix_[i][j];
@@ -273,9 +272,11 @@ void S21Matrix::SumMatrix(const S21Matrix &other) {
  * @brief Subtract other matrix from current
  * @param other - the matrix that will be subtract
  */
-void S21Matrix::SubMatrix(const S21Matrix &other) {
-  CheckSizesFor(SUB, other);
-
+void S21Matrix::SubMatrix(const S21Matrix& other) {
+  if (rows_ != other.rows_ || cols_ != other.cols_) {
+    throw std::logic_error(
+        "The subtraction was rejected. Matrices have different sizes");
+  }
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
       matrix_[i][j] = matrix_[i][j] - other.matrix_[i][j];
@@ -299,10 +300,13 @@ void S21Matrix::MulNumber(const double num) {
  * @brief Multiplies a matrix by the other one
  * @param other - the matrix that will be multiplied
  */
-void S21Matrix::MulMatrix(const S21Matrix &other) {
-  CheckSizesFor(MUL_MATRIX, other);
-
-  double **tmp = NewArrayOfElements(rows_, other.cols_);
+void S21Matrix::MulMatrix(const S21Matrix& other) {
+  if (this->rows_ != other.cols_ || this->cols_ != other.rows_) {
+    throw std::logic_error(
+        "The multiplication of matrices was rejected. Matrices have "
+        "different sizes");
+  }
+  double** tmp = NewArrayOfElements(rows_, other.cols_);
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < other.cols_; ++j) {
       for (int k = 0; k < cols_; ++k) {
@@ -310,7 +314,6 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
       }
     }
   }
-
   DeleteArrayOfElements();
   cols_ = other.cols_;
   matrix_ = tmp;
@@ -361,7 +364,7 @@ S21Matrix S21Matrix::CalcComplements() {
  * @param col_skip - j index
  * @return the value of algebraic addition
  */
-double S21Matrix::CalcOneComplement(const S21Matrix &src, int row_skip,
+double S21Matrix::CalcOneComplement(const S21Matrix& src, int row_skip,
                                     int col_skip) {
   double sign = ((row_skip + col_skip) % 2) ? -1 : 1;
   return (sign * CalcMinor(src, row_skip, col_skip));
@@ -374,7 +377,7 @@ double S21Matrix::CalcOneComplement(const S21Matrix &src, int row_skip,
  * @param col_skip - j index
  * @return the value of minor
  */
-double S21Matrix::CalcMinor(const S21Matrix &src, int row_skip, int col_skip) {
+double S21Matrix::CalcMinor(const S21Matrix& src, int row_skip, int col_skip) {
   S21Matrix matrix_for_minor(src.rows_ - 1, src.cols_ - 1);
   matrix_for_minor.FillForMinor(src, row_skip, col_skip);
   return matrix_for_minor.CalcDeterminant();
@@ -422,7 +425,7 @@ double S21Matrix::CalcDeterminant() {
  * @param row_skip - i index
  * @param col_skip - j index
  */
-void S21Matrix::FillForMinor(const S21Matrix &src, int row_skip, int col_skip) {
+void S21Matrix::FillForMinor(const S21Matrix& src, int row_skip, int col_skip) {
   int iMinor = 0;
   int jMinor = 0;
   for (int iSrc = 0; iSrc < src.rows_; ++iSrc) {
@@ -457,103 +460,44 @@ S21Matrix S21Matrix::InverseMatrix() {
   return result;
 }
 
-/* Help methods ---------------------------------------------------------*/
-
-/**
- * @brief Compare the current matrix size with other for different operation
- * @param type_of_operation - numeric code of operation described in enum
- * 'types_of_operation' (SUM = 1, SUB = 2, etc.)
- * @param other - the matrix to be compared with
- */
-void S21Matrix::CheckSizesFor(int type_of_operation,
-                              const S21Matrix &other) const {
-  if (this->GetRows() != other.GetRows() ||
-      this->GetCols() != other.GetCols()) {
-    if (type_of_operation == SUM) {
-      throw std::logic_error(
-          "The addition was rejected. Matrices have different sizes");
-    }
-    if (type_of_operation == SUB) {
-      throw std::logic_error(
-          "The subtraction was rejected. Matrices have different sizes");
-    }
-  }
-  if (this->GetRows() != other.GetCols() ||
-      this->GetCols() != other.GetRows()) {
-    if (type_of_operation == MUL_MATRIX) {
-      throw std::logic_error(
-          "The multiplication of matrices was rejected. Matrices have "
-          "different sizes");
-    }
-  }
-}
 /* Accessors and mutators -------------------------------------------------*/
 
 int S21Matrix::GetRows() const { return rows_; }
 
 int S21Matrix::GetCols() const { return cols_; }
 
-void S21Matrix::SetRows(int new_rows) { SetRowsOrCols(true, new_rows); }
-
-void S21Matrix::SetCols(int new_cols) { SetRowsOrCols(false, new_cols); }
-
-void S21Matrix::SetRowsOrCols(bool is_it_row, int value) {
-  int src_rows, new_rows, src_cols, new_cols;
-  src_rows = new_rows = rows_;
-  src_cols = new_cols = cols_;
-  if (is_it_row) {
-    if (value < rows_) {
-      src_rows = value;
+void S21Matrix::SetRows(int new_rows) {
+  if (new_rows != rows_) {
+    int tmp_rows = 0;
+    if (new_rows < rows_) {
+      tmp_rows = new_rows;
+    } else {
+      tmp_rows = rows_;
     }
-    new_rows = value;
-  } else {
-    if (value < cols_) {
-      src_cols = value;
+    S21Matrix tmp(new_rows, cols_);
+    for (int i = 0; i < tmp_rows; i++) {
+      for (int j = 0; j < cols_; j++) {
+        tmp.matrix_[i][j] = matrix_[i][j];
+      }
     }
-    new_cols = value;
-  }
-  S21Matrix tmp(new_rows, new_cols);
-  for (int i = 0; i < src_rows; i++) {
-    for (int j = 0; j < src_cols; j++) {
-      tmp.matrix_[i][j] = matrix_[i][j];
-    }
-  }
-  *this = tmp;
-}
-
-/* Additional methods -----------------------------------------------------*/
-
-/**
- * @brief Fills the matrix with numbers in order from 1 to rows * cols)
- */
-void S21Matrix::FillByOrder() {
-  double k = 0.0;
-  for (int i = 0; i < rows_; ++i) {
-    for (int j = 0; j < cols_; ++j) {
-      matrix_[i][j] = ++k;
-    }
+    *this = tmp;
   }
 }
 
-/**
- * @brief Fills the matrix with even numbers (2.0, 4.0, 6.0...)
- */
-void S21Matrix::FillByEven() {
-  double k = 0.0;
-  for (int i = 0; i < rows_; ++i) {
-    for (int j = 0; j < cols_; ++j) {
-      matrix_[i][j] = ++k * 2.0;
+void S21Matrix::SetCols(int new_cols) {
+  if (new_cols != cols_) {
+    S21Matrix tmp(rows_, new_cols);
+    int tmp_cols = 0;
+    if (new_cols < cols_) {
+      tmp_cols = new_cols;
+    } else {
+      tmp_cols = cols_;
     }
-  }
-}
-
-/**
- * @brief Fills the matrix with numbers by 0
- */
-void S21Matrix::FillWithZero() {
-  for (int i = 0; i < rows_; ++i) {
-    for (int j = 0; j < cols_; ++j) {
-      matrix_[i][j] = 0.0;
+    for (int i = 0; i < rows_; i++) {
+      for (int j = 0; j < tmp_cols; j++) {
+        tmp.matrix_[i][j] = matrix_[i][j];
+      }
     }
+    *this = tmp;
   }
 }

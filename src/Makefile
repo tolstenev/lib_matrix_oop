@@ -30,13 +30,13 @@
 #  - re:               remove all generated files and recompile library
 
 LIB_NAME	:= s21_matrix_oop.a
-HEADERS		:= s21_matrix_oop.h
+HEADER		:= s21_matrix_oop.h
 
 CC			:= gcc
 CPP_FLAGS	:= -lstdc++ -std=c++17 -pedantic -Wall -Werror -Wextra
 GTEST_FLAGS	:= -lgtest
-SRCS		:= s21_matrix_oop.cc
-OBJS		:= $(SRCS:.cc=.o)
+SRC		:= s21_matrix_oop.cc
+OBJS		:= $(SRC:.cc=.o)
 TEST		:= test
 TEST_NAME	:= s21_matrix_oop_unit_test
 SRC_TEST	:= $(TEST_NAME).cc
@@ -65,7 +65,7 @@ s21_matrix_oop.a: $(OBJS)
 		@clear
 		ar rcs $(LIB_NAME) $(OBJS)
 
-%.o: %.cc $(HEADERS)
+%.o: %.cc $(HEADER)
 		$(CC) $(CPP_FLAGS) -c $< -o $@
 
 test: $(SRC_TEST) $(LIB_NAME)
@@ -75,7 +75,7 @@ test: $(SRC_TEST) $(LIB_NAME)
 
 gcov_report: $(LIB_NAME)
 		@clear
-		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(GCOV_FLAGS) $(SRC_TEST) $(SRCS) -o $(REPORT)
+		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) $(GCOV_FLAGS) $(SRC_TEST) $(SRC) -o $(REPORT)
 		./$(REPORT)
 		lcov -t "$(REPORT)" -o $(REPORT).info -c -d .
 		genhtml -o report $(REPORT).info
@@ -86,15 +86,15 @@ open: gcov_report
 		@clear
 		open ./report/index.html
 
-lint: $(SRCS) $(HEADERS) $(SRC_TEST)
-		clang-format -i $(SRCS) $(HEADERS) $(SRC_TEST)
+lint: $(SRC) $(HEADER) $(SRC_TEST)
+		clang-format -i $(SRC) $(HEADER) $(SRC_TEST)
 
 check: $(LIB_NAME)
 		@clear
 		@echo ---------------------CPPCHECK---------------------
-		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADERS) $(SRCS) $(SRC_TEST)
+		cppcheck --language=c++ --enable=all --suppress=missingIncludeSystem . $(HEADER) $(SRC) $(SRC_TEST)
 		@echo -------------------CLANG-FORMAT-------------------
-		clang-format -n $(SRCS) $(HEADERS) $(SRC_TEST)
+		clang-format -n $(SRC) $(HEADER) $(SRC_TEST)
 		@echo -------------------MEMORY_LEAKS-------------------
 		$(CC) $(CPP_FLAGS) $(GTEST_FLAGS) -g $(SRC_TEST) $(LIB_NAME) -o $(TEST_NAME).out
 		CK_FORK=no leaks --atExit -- ./$(TEST_NAME).out

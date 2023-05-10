@@ -29,8 +29,8 @@ TEST(Constructors, ParameterizedColsFail) {
 TEST(Constructors, DefaultSuccess) {
   S21Matrix matrix;
 
-  EXPECT_GE(matrix.GetRows(), 1);
-  EXPECT_GE(matrix.GetCols(), 1);
+  EXPECT_GE(matrix.GetRows(), 0);
+  EXPECT_GE(matrix.GetCols(), 0);
 }
 
 TEST(Constructors, CopySuccess) {
@@ -70,8 +70,19 @@ TEST(Comparing, EqMatrixTrue) {
   S21Matrix matrix_1(3, 2);
   S21Matrix matrix_2(3, 2);
 
-  matrix_1.FillByOrder();
-  matrix_2.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
+  matrix_1(2, 0) = 5.0;
+  matrix_1(2, 1) = 6.0;
+
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
+  matrix_2(2, 0) = 5.0;
+  matrix_2(2, 1) = 6.0;
 
   EXPECT_EQ(matrix_1.EqMatrix(matrix_2), true);
 }
@@ -80,26 +91,38 @@ TEST(Comparing, EqMatrixFalse1) {
   S21Matrix matrix_1(3, 2);
   S21Matrix matrix_2(3, 2);
 
-  matrix_2.FillByOrder();
   matrix_2(0, 0) = 21.00001;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
+  matrix_2(2, 0) = 5.0;
+  matrix_2(2, 1) = 6.0;
 
   EXPECT_EQ(matrix_1.EqMatrix(matrix_2), false);
 }
 
 TEST(Comparing, EqMatrixFalse2) {
   S21Matrix matrix_1(2, 1);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(1, 0) = 2.0;
   S21Matrix matrix_2(1, 2);
-  matrix_1.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
 
   EXPECT_EQ(matrix_1.EqMatrix(matrix_2), false);
 }
 
 TEST(Calculations, SumMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
 
   matrix_1.SumMatrix(matrix_2);
 
@@ -118,9 +141,15 @@ TEST(Calculations, SumMatrixException) {
 
 TEST(Calculations, SubMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
 
   matrix_1.SubMatrix(matrix_2);
 
@@ -139,7 +168,10 @@ TEST(Calculations, SubMatrixException) {
 
 TEST(Calculations, MulNumberSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
 
   matrix_1.MulNumber(2.0);
 
@@ -185,9 +217,15 @@ TEST(Calculations, MulMatrixException) {
 
 TEST(Overloads, EqMatrixSuccess) {
   S21Matrix matrix_1(3, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix matrix_2(3, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
 
   EXPECT_EQ(matrix_1 == matrix_2, true);
 }
@@ -201,11 +239,20 @@ TEST(Overloads, Comparing_EqMatrixFail) {
 
 TEST(Overloads, SumMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
   S21Matrix result(2, 2);
-  result.FillWithZero();
+  result(0, 0) = 0.0;
+  result(0, 1) = 0.0;
+  result(1, 0) = 0.0;
+  result(1, 1) = 0.0;
 
   result = matrix_1 + matrix_2;
 
@@ -217,11 +264,20 @@ TEST(Overloads, SumMatrixSuccess) {
 
 TEST(Overloads, SubMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByEven();
+  matrix_1(0, 0) = 2.0;
+  matrix_1(0, 1) = 4.0;
+  matrix_1(1, 0) = 6.0;
+  matrix_1(1, 1) = 8.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
   S21Matrix result(2, 2);
-  result.FillWithZero();
+  result(0, 0) = 0.0;
+  result(0, 1) = 0.0;
+  result(1, 0) = 0.0;
+  result(1, 1) = 0.0;
 
   result = matrix_1 - matrix_2;
 
@@ -233,9 +289,15 @@ TEST(Overloads, SubMatrixSuccess) {
 
 TEST(Overloads, MulNumberSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix result(2, 2);
-  result.FillWithZero();
+  result(0, 0) = 0.0;
+  result(0, 1) = 0.0;
+  result(1, 0) = 0.0;
+  result(1, 1) = 0.0;
 
   result = matrix_1 * 2.0;
 
@@ -261,9 +323,15 @@ TEST(Overloads, MulMatrixSuccess) {
 
 TEST(AssignmentCalculations, SumMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  matrix_1(0, 0) = 1.0;
+  matrix_1(0, 1) = 2.0;
+  matrix_1(1, 0) = 3.0;
+  matrix_1(1, 1) = 4.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
 
   matrix_1 += matrix_2;
 
@@ -275,9 +343,15 @@ TEST(AssignmentCalculations, SumMatrixSuccess) {
 
 TEST(AssignmentCalculations, SubMatrixSuccess) {
   S21Matrix matrix_1(2, 2);
-  matrix_1.FillByEven();
+  matrix_1(0, 0) = 2.0;
+  matrix_1(0, 1) = 4.0;
+  matrix_1(1, 0) = 6.0;
+  matrix_1(1, 1) = 8.0;
   S21Matrix matrix_2(2, 2);
-  matrix_2.FillByOrder();
+  matrix_2(0, 0) = 1.0;
+  matrix_2(0, 1) = 2.0;
+  matrix_2(1, 0) = 3.0;
+  matrix_2(1, 1) = 4.0;
 
   matrix_1 -= matrix_2;
 
@@ -288,15 +362,18 @@ TEST(AssignmentCalculations, SubMatrixSuccess) {
 }
 
 TEST(AssignmentCalculations, MulNumberSuccess) {
-  S21Matrix matrix_1(2, 2);
-  matrix_1.FillByOrder();
+  S21Matrix matrix(2, 2);
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(1, 0) = 3.0;
+  matrix(1, 1) = 4.0;
 
-  matrix_1 *= 2.0;
+  matrix *= 2.0;
 
-  EXPECT_DOUBLE_EQ(matrix_1(0, 0), 2.0);
-  EXPECT_DOUBLE_EQ(matrix_1(0, 1), 4.0);
-  EXPECT_DOUBLE_EQ(matrix_1(1, 0), 6.0);
-  EXPECT_DOUBLE_EQ(matrix_1(1, 1), 8.0);
+  EXPECT_DOUBLE_EQ(matrix(0, 0), 2.0);
+  EXPECT_DOUBLE_EQ(matrix(0, 1), 4.0);
+  EXPECT_DOUBLE_EQ(matrix(1, 0), 6.0);
+  EXPECT_DOUBLE_EQ(matrix(1, 1), 8.0);
 }
 
 TEST(AssignmentCalculations, MulMatrixSuccess) {
@@ -314,7 +391,12 @@ TEST(AssignmentCalculations, MulMatrixSuccess) {
 
 TEST(Special, TransposeSuccess) {
   S21Matrix matrix(2, 3);
-  matrix.FillByOrder();
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(0, 2) = 3.0;
+  matrix(1, 0) = 4.0;
+  matrix(1, 1) = 5.0;
+  matrix(1, 2) = 6.0;
   S21Matrix result = matrix.Transpose();
 
   EXPECT_EQ(result.GetRows(), 3);
@@ -437,14 +519,25 @@ TEST(Special, InverseMatrixSuccess) {
 
 TEST(Special, InverseMatrixFail) {
   S21Matrix matrix(3, 3);
-  matrix.FillWithZero();
+  matrix(0, 0) = 0.0;
+  matrix(0, 1) = 0.0;
+  matrix(0, 2) = 0.0;
+  matrix(1, 0) = 0.0;
+  matrix(1, 1) = 0.0;
+  matrix(1, 2) = 0.0;
+  matrix(2, 0) = 0.0;
+  matrix(2, 1) = 0.0;
+  matrix(2, 2) = 0.0;
 
   EXPECT_ANY_THROW(matrix.InverseMatrix());
 }
 
-TEST(Mutators, SetRowSuccess1) {
+TEST(AccessorMutator, SetRowSuccess1) {
   S21Matrix matrix(2, 2);
-  matrix.FillByOrder();
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(1, 0) = 3.0;
+  matrix(1, 1) = 4.0;
 
   matrix.SetRows(1);
 
@@ -452,9 +545,12 @@ TEST(Mutators, SetRowSuccess1) {
   EXPECT_EQ(matrix.GetCols(), 2);
 }
 
-TEST(Mutators, SetRowSuccess2) {
+TEST(AccessorMutator, SetRowSuccess2) {
   S21Matrix matrix(2, 2);
-  matrix.FillByOrder();
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(1, 0) = 3.0;
+  matrix(1, 1) = 4.0;
 
   matrix.SetRows(3);
 
@@ -464,9 +560,12 @@ TEST(Mutators, SetRowSuccess2) {
   EXPECT_DOUBLE_EQ(matrix(2, 1), 0.0);
 }
 
-TEST(Mutators, SetColSuccess1) {
+TEST(AccessorMutator, SetColSuccess1) {
   S21Matrix matrix(2, 2);
-  matrix.FillByOrder();
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(1, 0) = 3.0;
+  matrix(1, 1) = 4.0;
 
   matrix.SetCols(1);
 
@@ -474,9 +573,12 @@ TEST(Mutators, SetColSuccess1) {
   EXPECT_EQ(matrix.GetCols(), 1);
 }
 
-TEST(Mutators, SetColSuccess2) {
+TEST(AccessorMutator, SetColSuccess2) {
   S21Matrix matrix(2, 2);
-  matrix.FillByOrder();
+  matrix(0, 0) = 1.0;
+  matrix(0, 1) = 2.0;
+  matrix(1, 0) = 3.0;
+  matrix(1, 1) = 4.0;
 
   matrix.SetCols(3);
 

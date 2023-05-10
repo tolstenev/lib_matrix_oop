@@ -41,62 +41,54 @@ enum types_of_operation {
  * @brief Implementation of the matrix
  */
 class S21Matrix {
- private:
-  int rows_, cols_;
-  double** matrix_;
-
  public:
-  /* Constructors and destructors ----------------------------------------*/
+  /* Constructors and destructors -----------------------------------------*/
   S21Matrix();
-  S21Matrix(int rows, int cols);
+  explicit S21Matrix(int rows, int cols);
   S21Matrix(const S21Matrix& other);
   S21Matrix(S21Matrix&& other) noexcept;
   ~S21Matrix();
 
-  /* Overloads -----------------------------------------------------------*/
-  S21Matrix& operator=(const S21Matrix& other);
-  S21Matrix operator+(const S21Matrix& other) const;
-  S21Matrix operator-(const S21Matrix& other) const;
-  S21Matrix operator*(const double num) const;
-  S21Matrix operator*(const S21Matrix& other) const;
+  /* Overloads ------------------------------------------------------------*/
   double& operator()(int row, int col);
   bool operator==(const S21Matrix& other);
+  S21Matrix& operator=(S21Matrix const& other);
+  S21Matrix operator+(const S21Matrix& other) const;
+  S21Matrix operator-(const S21Matrix& other) const;
+  S21Matrix operator*(const S21Matrix& other) const;
+  S21Matrix operator*(const double num) const;
   S21Matrix& operator+=(const S21Matrix& other);
   S21Matrix& operator-=(const S21Matrix& other);
-  S21Matrix& operator*=(const double num);
   S21Matrix& operator*=(const S21Matrix& other);
+  S21Matrix& operator*=(const double num);
 
-  /* Core methods --------------------------------------------------------*/
+  /* Core methods ---------------------------------------------------------*/
   bool EqMatrix(const S21Matrix& other);
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
-  void MulNumber(const double num);
   void MulMatrix(const S21Matrix& other);
+  void MulNumber(const double num);
+  double Determinant();
   S21Matrix Transpose();
   S21Matrix CalcComplements();
-  double Determinant();
   S21Matrix InverseMatrix();
 
-  /* Accessors and mutators ----------------------------------------------*/
+  /* Accessors and mutators -----------------------------------------------*/
   int GetRows() const;
   int GetCols() const;
   void SetRows(int new_rows);
   void SetCols(int new_cols);
-  void SetRowsOrCols(bool is_it_row, int value);
-
-  /* Additional methods for testing --------------------------------------*/
-  void FillByOrder();
-  void FillByEven();
-  void FillWithZero();
 
  private:
-  /* Memory management functions -----------------------------------------*/
+  int rows_{}, cols_{};
+  double** matrix_{};
+
+  /* Memory management methods --------------------------------------------*/
   double** NewArrayOfElements(int rows, int cols) const;
   void DeleteArrayOfElements();
   void CopyArrayOfElements(const S21Matrix& other);
 
-  /* Help methods --------------------------------------------------------*/
-  void CheckSizesFor(int type_of_operation, const S21Matrix& other) const;
+  /* Help methods ---------------------------------------------------------*/
   double CalcDeterminant();
   void FillForMinor(const S21Matrix& src, int row_skip, int col_skip);
   double CalcOneComplement(const S21Matrix& src, int row_skip, int col_skip);
